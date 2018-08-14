@@ -12,6 +12,7 @@ services:
       - AUTH_PASS=lol
       - DISABLE_AUTH=false
       - DATABASE_URI=
+      - COOKIE_SECRET=839c26a7-1982-46e8-99e6-e7c592db527a
     ports:
       - "3000:3000"
 

@@ -13,6 +13,7 @@ const environmentVariables = [
   'AUTH_PASS',
   'DISABLE_AUTH',
   'DATABASE_URI',
+  'COOKIE_SECRET',
 ];
 
 re(environmentVariables);

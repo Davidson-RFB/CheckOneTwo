@@ -1,18 +1,14 @@
-const basicAuth = require('basic-auth');
-const httpErrors = require('httperrors');
 const config = require('../../config');
+const User = require('../models/user');
 
-module.exports = (req, res, next) => {
+module.exports = async (req, res, next) => {
   // You can use whatever auth strategy you like in here
   if (config.DISABLE_AUTH) return next();
 
-  const auth = basicAuth(req);
-  if (!auth || !auth.name || !auth.pass) {
-    res.setHeader('WWW-Authenticate', 'Basic realm="Secure API"');
-    throw httpErrors.Unauthorized('Must provide both username and password');
+  if (req.signedCookies.user) {
+    const user = await User.findById(req.signedCookies.user);
+    req.user = user; // eslint-disable-line no-param-reassign
   }
-  if (auth.name !== config.AUTH_USER || auth.pass !== config.AUTH_PASS) {
-    throw httpErrors.Forbidden('Incorrect credentials');
-  }
+
   return next();
 };
