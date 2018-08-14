@@ -56,6 +56,25 @@ describe('/v1/users', () => {
       expect(response.status).to.equal(403);
     });
   });
+
+  describe.skip('POST/:id/send-login-token', () => {
+    it('must send a login token for an unauthorised user', async function () { // eslint-disable-line func-names
+      this.timeout(30000);
+      const response = await authedApp.post(`/v1/users/${fixture.id}/send-login-token`, {}, {
+        Cookie: null,
+      });
+      expect(response.status).to.equal(200);
+    });
+  });
+
+  describe('POST/:id/login', () => {
+    it('must barf on an invalid token', async () => {
+      const response = await authedApp.get(`/v1/users/${fixture.id}/login`, { token: 'hackhackhack' }, {
+        Cookie: null,
+      });
+      expect(response.status).to.equal(401);
+    });
+  });
 });
 
 describe('/v1/users', () => {
