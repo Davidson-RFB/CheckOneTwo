@@ -1,0 +1,62 @@
+{
+  "name": "boilerplate",
+  "version": "1.0.0",
+  "description": "Boilerplate",
+  "main": "src/index.js",
+  "engines": {
+    "node": "^10.0.0"
+  },
+  "scripts": {
+    "start": "/usr/bin/env node ./bin/server",
+    "test": "mocha --reporter spec",
+    "watch": "watch mocha --reporter spec",
+    "coverage": "nyc npm test",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "docker:test": "docker-compose run --rm --service-ports test npm test",
+    "docker:watch": "docker-compose run --rm --service-ports test npm run watch",
+    "docker:coverage": "docker-compose run --rm test npm run coverage",
+    "docker:lint": "docker-compose run --rm test npm run coverage",
+    "docker:migrate": "docker-compose run --rm test npm run db:migrate",
+    "report": "nyc report --reporter=html",
+    "full": "npm run coverage && npm run report",
+    "precommit": "npm run lint",
+    "db:migrate": "./bin/migrate"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/davidbanham/node_docker_boilerplate.git"
+  },
+  "author": "david@banham.id.au",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/davidbanham/node_docker_boilerplate/issues"
+  },
+  "homepage": "https://github.com/davidbanham/node_docker_boilerplate#readme",
+  "dependencies": {
+    "basic-auth": "^1.1.0",
+    "body-parser": "^1.15.2",
+    "bunyan": "^1.8.5",
+    "express": "^4.14.0",
+    "express-async-errors": "^2.0.0",
+    "httperrors": "^2.1.0",
+    "must": "^0.13.4",
+    "pg": "^7.3.0",
+    "postgrator-cli": "^0.2.2",
+    "required_env": "^1.0.0",
+    "uuid": "^3.0.1"
+  },
+  "devDependencies": {
+    "bandname": "^1.0.0",
+    "doubleagent": "^1.1.0",
+    "eslint": "^3.11.1",
+    "eslint-config-airbnb": "^13.0.0",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^2.2.3",
+    "eslint-plugin-react": "^6.7.1",
+    "husky": "^0.11.9",
+    "mocha": "^3.2.0",
+    "nyc": "^10.0.0",
+    "watch": "^1.0.1"
+  }
+}

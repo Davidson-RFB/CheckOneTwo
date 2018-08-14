@@ -1,0 +1,14 @@
+#!/usr/bin/env node
+
+const exec = require('child_process').execSync;
+
+const stamp = exec('date -u +"%s"').toString().substring(0, 10);
+
+const name = process.argv[2];
+
+[
+  `${stamp}.do.${name}`,
+  `${stamp}.undo.${name}`,
+].forEach(n => {
+  exec(`touch ./migrations/${n}.sql`);
+});

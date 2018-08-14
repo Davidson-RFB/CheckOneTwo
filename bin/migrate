@@ -1,0 +1,22 @@
+#!/usr/bin/env node
+
+const config = require('../config');
+
+const postgrator = require('postgrator');
+
+postgrator.setConfig({
+  migrationDirectory: __dirname + '/../migrations',
+  driver: 'pg',
+  connectionString: config.DATABASE_URI,
+})
+
+postgrator.migrate('max', function (err, migrations) {
+  if (err) {
+    throw err;
+  } else {
+    console.log(migrations)
+  }
+  postgrator.endConnection(function () {
+    console.log('complete');
+  });
+});

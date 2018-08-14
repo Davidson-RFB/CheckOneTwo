@@ -1,0 +1,46 @@
+version: '2'
+services:
+  common:
+    build: .
+    volumes:
+      # For development, mount in all your code so that changes to your code can be immeditely reflected in your app
+      - .:/usr/src/app
+      # But don't mount in node_modules. Keep this separate from node_modules on your host OS because native modules won't be compatible
+      - /usr/src/app/node_modules
+    environment:
+      - AUTH_USER=test
+      - AUTH_PASS=lol
+      - DISABLE_AUTH=false
+      - DATABASE_URI=
+    ports:
+      - "3000:3000"
+
+  test:
+    extends: common
+    command: npm test
+    environment:
+      - NODE_ENV=testing
+      - DATABASE_URI=postgres://boilerplate@postgresql/boilerplate_testing
+    links:
+      - postgresql
+    depends_on:
+      - postgresql
+
+  dev:
+    extends: common
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URI=postgres://boilerplate@postgresql/boilerplate_development
+    links:
+      - postgresql
+    depends_on:
+      - postgresql
+
+  # You can use whatever DB you like, obv
+  postgresql:
+    image: postgres:9.5
+    command: postgres
+    volumes:
+      - ./config/database:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"

@@ -1,0 +1,30 @@
+{
+  "env": {
+    "node": true
+  },
+  "extends": "airbnb",
+  "globals": {
+    "describe": false,
+    "it": false,
+    "before": false,
+    "beforeEach": false,
+    "after": false,
+    "afterEach": false,
+    "expect": false
+  },
+  "plugins": [
+      "react",
+      "jsx-a11y",
+      "import"
+  ],
+  "rules": {
+    "max-len": "off",
+    "no-underscore-dangle": "off",
+    "no-restricted-syntax": [
+      "error",
+      "ForInStatement",
+      "LabeledStatement",
+      "WithStatement"
+    ]
+  }
+}
