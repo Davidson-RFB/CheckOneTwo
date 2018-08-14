@@ -1,5 +1,4 @@
 const must = require('must');
-const config = require('../config');
 const { waitForDb } = require('../src/lib/util');
 const FixtureFactory = require('./fixtures/user');
 const User = require('../src/models/user');
@@ -15,7 +14,9 @@ function authHeader(user, pass) {
 }
 
 const doubleApp = doubleagent(app);
-doubleApp.defaultHeaders = { Authorization: authHeader(config.AUTH_USER, config.AUTH_PASS) };
+doubleApp.defaultHeaders = {
+  Cookie: 'user=s%3Aaaa64479-a9b8-46fc-805a-18f8fd03e049.eb18WHNsTKaTMwsiLqv15dEywWEMcVM1LCXGhp9vtA8',
+};
 
 process.nextTick(() => {
   before('wait for db connection', async () => waitForDb());
@@ -30,16 +31,7 @@ process.nextTick(() => {
   });
 });
 
-const authedApp = () => {
-  const agent = doubleagent(app);
-  agent.defaultHeaders = {
-    Cookie: 'user=s%3Aaaa64479-a9b8-46fc-805a-18f8fd03e049.eb18WHNsTKaTMwsiLqv15dEywWEMcVM1LCXGhp9vtA8',
-  };
-  return agent;
-};
-
 module.exports = {
-  authedApp: authedApp(),
   app: doubleApp,
   authHeader,
 };
