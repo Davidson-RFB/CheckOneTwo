@@ -8,6 +8,13 @@ module.exports = async () => {
   const data = {
     name: bandname(),
     group_id: fixture.id,
+    items: [
+      {
+        name: bandname(),
+        quantity: 1,
+        notes: bandname(),
+      },
+    ],
   };
 
   return {

@@ -9,7 +9,7 @@ describe('site model', () => {
   });
 
   it('must return something', () => {
-    expect(Site).to.exist;
+    expect(Site).to.exist();
   });
 
   it('must create a site', async () => {
@@ -25,7 +25,13 @@ describe('site model', () => {
 
   it('must have timestamps', async () => {
     const site = await Site.create(fixture);
-    expect(site.created_at).to.exist;
-    expect(site.updated_at).to.exist;
+    expect(site.created_at).to.exist();
+    expect(site.updated_at).to.exist();
+  });
+
+  it('must have an items array', async () => {
+    const site = await Site.create(fixture);
+    expect(Array.isArray(site.items)).to.be.true();
+    expect(site.items).to.eql(fixture.items);
   });
 });
