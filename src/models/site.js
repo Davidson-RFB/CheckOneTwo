@@ -6,6 +6,23 @@ const addUUIDs = (i) => {
   return i;
 };
 
+const findLastChecked = async (input) => {
+  if (!input) return input;
+
+  const site = Object.assign({}, input);
+
+  try {
+    const lastCheckResult = await db.query('SELECT created_at FROM checks WHERE site_id = $1 ORDER BY created_at DESC LIMIT 1', [site.id]);
+    const check = lastCheckResult.rows[0];
+
+    site.last_checked_at = check.created_at;
+  } catch (e) {
+    site.last_checked_at = new Date(0);
+  }
+
+  return site;
+};
+
 const Site = {
   findAll: async (params) => {
     const query = ['SELECT id, group_id, name, items FROM sites'];
@@ -13,11 +30,17 @@ const Site = {
       query.push(`LIMIT ${params.per_page} OFFSET ${(params.page - 1) * params.per_page}`);
     }
     const result = await db.query(query.join(' '));
-    return result.rows;
+
+    const rows = await Promise.all(result.rows.map(findLastChecked));
+
+    return rows;
   },
   findById: async (id) => {
     const result = await db.query('SELECT id, group_id, name, items FROM sites WHERE id = $1', [id]);
-    return result.rows[0];
+
+    const site = await findLastChecked(result.rows[0]);
+
+    return site;
   },
   create: async (site) => {
     if (!site.id) site.id = uuid.v4();

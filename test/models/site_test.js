@@ -1,5 +1,7 @@
 const Site = require('../../src/models/site');
+const Check = require('../../src/models/check');
 const fixtureFactory = require('../fixtures/site');
+const checkFixtureFactory = require('../fixtures/check');
 
 describe('site model', () => {
   let fixture;
@@ -33,6 +35,15 @@ describe('site model', () => {
     const site = await Site.create(fixture);
     expect(Array.isArray(site.items)).to.be.true();
     expect(site.items).to.eql(fixture.items);
+  });
+
+  it('must contain the last checked at timestamp', async () => {
+    const site = await Site.create(fixture);
+    const check = (await checkFixtureFactory()).data;
+    check.site_id = site.id;
+    await Check.create(check);
+    const found = await Site.findById(site.id);
+    expect(found.last_checked_at).to.exist();
   });
 
   describe('create', () => {
