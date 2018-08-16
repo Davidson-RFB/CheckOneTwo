@@ -1,5 +1,6 @@
 const Site = require('../../src/models/site');
 const bandname = require('bandname');
+const uuid = require('uuid');
 const fixtureFactory = require('./group');
 
 module.exports = async () => {
@@ -10,6 +11,7 @@ module.exports = async () => {
     group_id: fixture.id,
     items: [
       {
+        id: uuid.v4(),
         name: bandname(),
         quantity: 1,
         notes: bandname(),

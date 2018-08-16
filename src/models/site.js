@@ -1,6 +1,11 @@
 const uuid = require('uuid');
 const { db } = require('../../config');
 
+const addUUIDs = (i) => {
+  if (!i.uuid) i.uuid = uuid.v4();
+  return i;
+};
+
 const Site = {
   findAll: async (params) => {
     const query = ['SELECT id, group_id, name, items FROM sites'];
@@ -16,12 +21,12 @@ const Site = {
   },
   create: async (site) => {
     if (!site.id) site.id = uuid.v4();
-    const result = await db.query('INSERT INTO sites(id, group_id, name, items) VALUES($1, $2, $3, $4) RETURNING *', [site.id, site.group_id, site.name, JSON.stringify(site.items)]);
+    const result = await db.query('INSERT INTO sites(id, group_id, name, items) VALUES($1, $2, $3, $4) RETURNING *', [site.id, site.group_id, site.name, JSON.stringify(site.items.map(addUUIDs))]);
     return result.rows[0];
   },
   update: async (site) => {
     const now = new Date().toISOString();
-    const result = await db.query('UPDATE sites SET (group_id, name, items, updated_at) VALUES($2, $3, $4, $5) WHERE id = $1 RETURNING *', [site.id, site.group_id, site.name, JSON.stringify(site.items), now]);
+    const result = await db.query('UPDATE sites SET (group_id, name, items, updated_at) = ($2, $3, $4, $5) WHERE id = $1 RETURNING *', [site.id, site.group_id, site.name, JSON.stringify(site.items.map(addUUIDs)), now]);
     return result.rows[0];
   },
 };

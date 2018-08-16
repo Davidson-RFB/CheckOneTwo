@@ -34,4 +34,33 @@ describe('check model', () => {
     expect(Array.isArray(check.items)).to.be.true();
     expect(check.items).to.eql(fixture.items);
   });
+
+  describe('create', () => {
+    it('must give items a uuid', async () => {
+      fixture.items = fixture.items.map((i) => {
+        delete i.uuid; // eslint-disable-line no-param-reassign
+        return i;
+      });
+      const check = await Check.create(fixture);
+      check.items.forEach((i) => {
+        if (!i) return;
+        expect(i.uuid).to.exist();
+      });
+    });
+  });
+
+  describe('update', () => {
+    it('must give items a uuid', async () => {
+      fixture.items = fixture.items.map((i) => {
+        delete i.uuid; // eslint-disable-line no-param-reassign
+        return i;
+      });
+      await Check.create(fixture);
+      const check = await Check.update(fixture);
+      check.items.forEach((i) => {
+        if (!i) return;
+        expect(i.uuid).to.exist();
+      });
+    });
+  });
 });

@@ -1,6 +1,11 @@
 const uuid = require('uuid');
 const { db } = require('../../config');
 
+const addUUIDs = (i) => {
+  if (!i.uuid) i.uuid = uuid.v4();
+  return i;
+};
+
 const Check = {
   findAll: async (params) => {
     const query = ['SELECT id, site_id, items FROM checks'];
@@ -16,12 +21,12 @@ const Check = {
   },
   create: async (check) => {
     if (!check.id) check.id = uuid.v4();
-    const result = await db.query('INSERT INTO checks(id, site_id, items) VALUES($1, $2, $3) RETURNING *', [check.id, check.site_id, JSON.stringify(check.items)]);
+    const result = await db.query('INSERT INTO checks(id, site_id, items) VALUES($1, $2, $3) RETURNING *', [check.id, check.site_id, JSON.stringify(check.items.map(addUUIDs))]);
     return result.rows[0];
   },
   update: async (check) => {
     const now = new Date().toISOString();
-    const result = await db.query('UPDATE checks SET (site_id, items, updated_at) VALUES($2, $3, $4) WHERE id = $1 RETURNING *', [check.id, check.site_id, JSON.stringify(check.items), now]);
+    const result = await db.query('UPDATE checks SET (site_id, items, updated_at) = ($2, $3, $4) WHERE id = $1 RETURNING *', [check.id, check.site_id, JSON.stringify(check.items.map(addUUIDs)), now]);
     return result.rows[0];
   },
 };

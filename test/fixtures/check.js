@@ -1,5 +1,6 @@
 const Check = require('../../src/models/check');
 const bandname = require('bandname');
+const uuid = require('uuid');
 const fixtureFactory = require('./site');
 
 module.exports = async () => {
@@ -9,6 +10,7 @@ module.exports = async () => {
     site_id: fixture.id,
     items: [
       {
+        id: uuid.v4(),
         notes: bandname(),
         status: 'pass',
       },
