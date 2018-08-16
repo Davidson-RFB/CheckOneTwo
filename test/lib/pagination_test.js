@@ -21,8 +21,13 @@ describe('pagination', () => {
     expect(result.page).to.equal(5);
   });
 
-  it('must pass through unexpected values', () => {
+  it('must pass through non-pagination values', () => {
     const result = pagination({ foo: 'bar' });
     expect(result.foo).to.equal('bar');
+  });
+
+  it('must sanitise pagination values', () => {
+    const result = pagination({ page: 'lol injection attack' });
+    expect(result.page).to.be(undefined);
   });
 });
