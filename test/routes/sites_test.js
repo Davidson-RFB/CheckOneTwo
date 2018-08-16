@@ -30,6 +30,13 @@ describe('/v1/sites', () => {
       expect(response.body.length).to.equal(2);
     });
 
+    it('must search group sites', async () => {
+      const newFixture = await (await FixtureFactory()).instance();
+
+      const response = await app.get('/v1/sites', { by_group: newFixture.group_id });
+      expect(response.body.length).to.equal(1);
+    });
+
     it('must deny an unauthorised user', async () => {
       const response = await app.get('/v1/sites', {}, {
         Cookie: null,

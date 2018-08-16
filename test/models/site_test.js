@@ -46,6 +46,12 @@ describe('site model', () => {
     expect(found.last_checked_at).to.exist();
   });
 
+  it('must return group sites', async () => {
+    const site = await Site.create(fixture);
+    const found = await Site.findAll({ by_group: site.group_id });
+    expect(found.length).to.equal(1);
+  });
+
   describe('create', () => {
     it('must give items a uuid', async () => {
       fixture.items = fixture.items.map((i) => {

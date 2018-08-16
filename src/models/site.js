@@ -26,10 +26,18 @@ const findLastChecked = async (input) => {
 const Site = {
   findAll: async (params) => {
     const query = ['SELECT id, group_id, name, items FROM sites'];
+
+    const args = [];
+
+    if (params.by_group) {
+      query.push('WHERE group_id = $1');
+      args.push(params.by_group);
+    }
+
     if (params.per_page && params.page) {
       query.push(`LIMIT ${params.per_page} OFFSET ${(params.page - 1) * params.per_page}`);
     }
-    const result = await db.query(query.join(' '));
+    const result = await db.query(query.join(' '), args);
 
     const rows = await Promise.all(result.rows.map(findLastChecked));
 
