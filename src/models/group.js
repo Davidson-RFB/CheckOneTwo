@@ -21,7 +21,7 @@ const Group = {
   },
   update: async (group) => {
     const now = new Date().toISOString();
-    const result = await db.query('UPDATE groups SET (name, updated_at) VALUES($2, $3) WHERE id = $1 RETURNING *', [group.id, group.name, now]);
+    const result = await db.query('UPDATE groups SET (name, updated_at) = ($2, $3) WHERE id = $1 RETURNING *', [group.id, group.name, now]);
     return result.rows[0];
   },
 };

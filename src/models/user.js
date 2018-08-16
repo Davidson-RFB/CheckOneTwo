@@ -21,7 +21,7 @@ const User = {
   },
   update: async (user) => {
     const now = new Date().toISOString();
-    const result = await db.query('UPDATE users SET (email, name, updated_at) VALUES($2, $3, $4) WHERE id = $1 RETURNING *', [user.id, user.email, user.name, now]);
+    const result = await db.query('UPDATE users SET (email, name, updated_at) = ($2, $3, $4) WHERE id = $1 RETURNING *', [user.id, user.email, user.name, now]);
     return result.rows[0];
   },
 };
