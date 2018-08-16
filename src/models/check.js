@@ -1,9 +1,25 @@
 const uuid = require('uuid');
-const { db } = require('../../config');
+const { db, mail } = require('../../config');
+const Group = require('./group');
+const Site = require('./site');
+const Nominee = require('./nominee');
 
 const addUUIDs = (i) => {
   if (!i.uuid) i.uuid = uuid.v4();
   return i;
+};
+
+const emailNominees = async (check) => {
+  if (check.items.reduce((r, item) => {
+    if (r) return r;
+    return item.status !== 'pass';
+  }, false)) {
+    const site = await Site.findById(check.site_id);
+    const group = await Group.findById(site.group_id);
+    const nominees = await Nominee.findAll({});
+
+    await Promise.all(nominees.map(nominee => mail.sendFailedCheck(nominee.email, check, site, group)));
+  }
 };
 
 const Check = {
@@ -21,7 +37,11 @@ const Check = {
   },
   create: async (check) => {
     if (!check.id) check.id = uuid.v4();
+
     const result = await db.query('INSERT INTO checks(id, site_id, items, submitted_by) VALUES($1, $2, $3, $4) RETURNING *', [check.id, check.site_id, JSON.stringify(check.items.map(addUUIDs)), check.submitted_by]);
+
+    await emailNominees(result.rows[0]);
+
     return result.rows[0];
   },
   update: async (check) => {

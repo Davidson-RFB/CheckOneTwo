@@ -1,17 +1,17 @@
 const nodemailer = require('nodemailer');
+const moment = require('moment-timezone');
 
 let transporter;
 
 if (process.env.SMTP_HOST === 'smtp.ethereal.email') {
   nodemailer.createTestAccount((err, account) => {
-    // create reusable transporter object using the default SMTP transport
     transporter = nodemailer.createTransport({
       host: 'smtp.ethereal.email',
       port: 587,
-      secure: false, // true for 465, false for other ports
+      secure: false,
       auth: {
-        user: account.user, // generated ethereal user
-        pass: account.pass, // generated ethereal password
+        user: account.user,
+        pass: account.pass,
       },
     });
   });
@@ -57,5 +57,21 @@ To log into Check One Two, click here:
 ${process.env.URI}/v1/users/${id}/login?token=${token}
 `;
     return send(to, 'Log in to Check One Two', body);
+  },
+  sendFailedCheck: (to, check, site, group) => {
+    const body = `
+A check on ${site.name} in group ${group.name} has the following failing items:
+
+${check.items.map((item) => {
+  if (item.status === 'pass') return '';
+  return `Name: ${item.name} - Status: ${item.status}
+Notes: ${item.notes}`;
+})}
+
+The check was completed by ${check.submitted_by} on ${moment(check.created_at).tz('Australia/Sydney')}.
+
+View the check at ${process.env.URI}/checks/${check.id}
+`;
+    return send(to, `Check failed on ${site.name} - ${group.name}`, body);
   },
 };

@@ -2,6 +2,7 @@ const must = require('must');
 const { waitForDb } = require('../src/lib/util');
 const FixtureFactory = require('./fixtures/user');
 const User = require('../src/models/user');
+const { db } = require('../config');
 
 global.expect = must; // https://www.npmjs.com/package/must#asserting-on-property-access
 
@@ -28,6 +29,9 @@ process.nextTick(() => {
     } catch (e) {
       fixture = await User.findById(fixture.id);
     }
+  });
+  after('clear db', async () => {
+    await db.query('TRUNCATE checks, groups, nominees, sites, users, things');
   });
 });
 

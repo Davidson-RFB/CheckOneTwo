@@ -8,9 +8,11 @@ module.exports = async () => {
 
   const data = {
     site_id: fixture.id,
+    submitted_by: bandname(),
     items: [
       {
         id: uuid.v4(),
+        name: bandname(),
         notes: bandname(),
         status: 'pass',
       },

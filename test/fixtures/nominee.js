@@ -3,7 +3,7 @@ const bandname = require('bandname');
 
 module.exports = async () => {
   const data = {
-    email: bandname(),
+    email: `${bandname().replace(' ', '_')}@example.com`,
   };
 
   return {

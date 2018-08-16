@@ -1,5 +1,6 @@
 const Check = require('../../src/models/check');
 const fixtureFactory = require('../fixtures/check');
+const nomineeFixtureFactory = require('../fixtures/nominee');
 
 describe('check model', () => {
   let fixture;
@@ -33,6 +34,15 @@ describe('check model', () => {
     const check = await Check.create(fixture);
     expect(Array.isArray(check.items)).to.be.true();
     expect(check.items).to.eql(fixture.items);
+  });
+
+  it.skip('must handle failed items', async function () { // eslint-disable-line func-names
+    this.timeout(20000);
+    await (await nomineeFixtureFactory()).instance();
+    const newFixture = (await fixtureFactory()).data;
+    newFixture.items[0].status = 'fail';
+
+    await Check.create(newFixture);
   });
 
   describe('create', () => {
