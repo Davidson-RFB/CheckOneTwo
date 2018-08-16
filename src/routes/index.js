@@ -2,12 +2,14 @@ const { Router } = require('express');
 const users = require('./users');
 const groups = require('./groups');
 const sites = require('./sites');
+const checks = require('./checks');
 const things = require('./things');
 
 const v1 = new Router()
   .use('/users', users)
   .use('/groups', groups)
   .use('/sites', sites)
+  .use('/checks', checks)
   .use('/things', things);
 
 const router = module.exports = new Router();
