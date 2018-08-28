@@ -5,7 +5,6 @@ const pagination = require('../lib/pagination');
 const demandUser = require('../middleware/demand_user');
 
 module.exports = new Router()
-  .use('', demandUser)
   .get('', async (req, res) => {
     const query = pagination(req.query);
     const results = await Group.findAll(query);
@@ -18,6 +17,7 @@ module.exports = new Router()
 
     res.json(group);
   })
+  .use('', demandUser)
   .post('', async (req, res) => {
     const payload = req.body;
 
