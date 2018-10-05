@@ -32,9 +32,9 @@ describe('/v1/users', () => {
 
     it('must deny an unauthorised user', async () => {
       const response = await app.get('/v1/users', {}, {
-        Cookie: null,
+        Authorization: null,
       });
-      expect(response.status).to.equal(403);
+      expect(response.status).to.equal(401);
     });
   });
 
@@ -51,17 +51,17 @@ describe('/v1/users', () => {
 
     it('must deny an unauthorised user', async () => {
       const response = await app.get(`/v1/users/${uuid.v4()}`, {}, {
-        Cookie: null,
+        Authorization: null,
       });
-      expect(response.status).to.equal(403);
+      expect(response.status).to.equal(401);
     });
   });
 
-  describe.skip('POST/:id/send-login-token', () => {
+  describe.skip('POST/:email/send-login-token', () => {
     it('must send a login token for an unauthorised user', async function () { // eslint-disable-line func-names
       this.timeout(30000);
-      const response = await app.post(`/v1/users/${fixture.id}/send-login-token`, {}, {
-        Cookie: null,
+      const response = await app.post(`/v1/users/${fixture.email}/send-login-token`, {}, {
+        Authorization: null,
       });
       expect(response.status).to.equal(200);
     });
@@ -70,7 +70,7 @@ describe('/v1/users', () => {
   describe('POST/:id/login', () => {
     it('must barf on an invalid token', async () => {
       const response = await app.get(`/v1/users/${fixture.id}/login`, { token: 'hackhackhack' }, {
-        Cookie: null,
+        Authorization: null,
       });
       expect(response.status).to.equal(401);
     });
@@ -98,9 +98,9 @@ describe('/v1/users', () => {
 
     it('must deny an unauthorised user', async () => {
       const response = await app.post('/v1/users', fixture, {
-        Cookie: null,
+        Authorization: null,
       });
-      expect(response.status).to.equal(403);
+      expect(response.status).to.equal(401);
     });
   });
 });

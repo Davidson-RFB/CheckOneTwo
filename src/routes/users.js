@@ -5,10 +5,25 @@ const pagination = require('../lib/pagination');
 const demandUser = require('../middleware/demand_user');
 const config = require('../../config');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 module.exports = new Router()
-  .post('/:id/send-login-token', async (req, res) => {
-    const user = await User.findById(req.params.id);
+  .post('/:email/send-login-token', async (req, res) => {
+    const parts = req.params.email.split('@');
+    const domain = parts[1];
+    const username = parts[0];
+
+    let user = await User.findByColumn('email', req.params.email)[0];
+    if (!user) {
+      if (domain === config.WHITELIST_DOMAIN) {
+        user = await User.create({
+          email: req.params.email,
+          name: username,
+        });
+      } else {
+        throw httperrors.NotFound();
+      }
+    }
 
     const salt = await bcrypt.genSalt(config.SALT_ROUNDS);
     const token = await bcrypt.hash(user.id + config.TOKEN_SECRET, salt);
@@ -25,13 +40,13 @@ module.exports = new Router()
       throw httperrors.Unauthorized();
     }
 
-    res.cookie('user', user.id, {
-      maxAge: 900000,
-      httpOnly: true,
-      signed: true,
-    });
+    const token = jwt.sign({
+      data: {
+        userID: user.id,
+      },
+    }, config.JWT_SECRET);
 
-    res.redirect(302, '/');
+    res.json(token);
   })
   .use('', demandUser)
   .get('', async (req, res) => {

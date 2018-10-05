@@ -32,9 +32,9 @@ describe('/v1/nominees', () => {
 
     it('must deny an unauthorised user', async () => {
       const response = await app.get('/v1/nominees', {}, {
-        Cookie: null,
+        Authorization: null,
       });
-      expect(response.status).to.equal(403);
+      expect(response.status).to.equal(401);
     });
   });
 
@@ -51,9 +51,9 @@ describe('/v1/nominees', () => {
 
     it('must deny an unauthorised user', async () => {
       const response = await app.get(`/v1/nominees/${uuid.v4()}`, {}, {
-        Cookie: null,
+        Authorization: null,
       });
-      expect(response.status).to.equal(403);
+      expect(response.status).to.equal(401);
     });
   });
 });
@@ -79,9 +79,9 @@ describe('/v1/nominees', () => {
 
     it('must deny an unauthorised user', async () => {
       const response = await app.post('/v1/nominees', fixture, {
-        Cookie: null,
+        Authorization: null,
       });
-      expect(response.status).to.equal(403);
+      expect(response.status).to.equal(401);
     });
   });
 });

@@ -14,6 +14,7 @@ services:
       - DATABASE_URI=
       - COOKIE_SECRET=839c26a7-1982-46e8-99e6-e7c592db527a
       - TOKEN_SECRET=a2ed14ea-0884-427a-9c62-91072decb314
+      - WHITELIST_DOMAIN=banham.id.au
     ports:
       - "3001:3000"
 

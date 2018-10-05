@@ -47,6 +47,15 @@ const environmentVariables = [
     var: 'URI',
     default: 'http://localhost:3000',
   },
+  {
+    var: 'URI',
+    default: 'http://localhost:3000',
+  },
+  'WHITELIST_DOMAIN',
+  {
+    var: 'JWT_SECRET',
+    default: '1bd8685d-a630-45d3-bead-3e3de3d16903',
+  },
 ];
 
 re(environmentVariables);

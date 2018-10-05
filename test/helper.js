@@ -3,6 +3,8 @@ const { waitForDb } = require('../src/lib/util');
 const FixtureFactory = require('./fixtures/user');
 const User = require('../src/models/user');
 const { db } = require('../config');
+const jwt = require('jsonwebtoken');
+const config = require('../config');
 
 global.expect = must; // https://www.npmjs.com/package/must#asserting-on-property-access
 
@@ -14,9 +16,15 @@ function authHeader(user, pass) {
   return `Basic ${encoded}`;
 }
 
+const token = jwt.sign({
+  data: {
+    userID: 'aaa64479-a9b8-46fc-805a-18f8fd03e049',
+  },
+}, config.JWT_SECRET);
+
 const doubleApp = doubleagent(app);
 doubleApp.defaultHeaders = {
-  Cookie: 'user=s%3Aaaa64479-a9b8-46fc-805a-18f8fd03e049.eb18WHNsTKaTMwsiLqv15dEywWEMcVM1LCXGhp9vtA8',
+  Authorization: `Token ${token}`,
 };
 
 process.nextTick(() => {

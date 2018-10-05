@@ -7,8 +7,8 @@ describe('user auth middleware', () => {
   });
   it('must deny access with a invalid user', async () => {
     const response = await app.get('/v1/users', {}, {
-      Cookie: 'user=hackhackhack',
+      Authorization: 'Token hackhackhack',
     });
-    expect(response.status).to.equal(403);
+    expect(response.status).to.equal(401);
   });
 });

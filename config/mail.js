@@ -54,7 +54,7 @@ module.exports = {
   sendLoginToken: (to, id, token) => {
     const body = `
 To log into Check One Two, click here: 
-${process.env.URI}/v1/users/${id}/login?token=${token}
+${process.env.APP_URI}/login/${id}/${token}
 `;
     return send(to, 'Log in to Check One Two', body);
   },
