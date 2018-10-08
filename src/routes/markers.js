@@ -1,32 +1,28 @@
 const { Router } = require('express');
 const httperrors = require('httperrors');
-const Check = require('../models/check');
+const Marker = require('../models/marker');
 const pagination = require('../lib/pagination');
 
 module.exports = new Router()
   .get('', async (req, res) => {
     const query = pagination(req.query);
-    const results = await Check.findAll(query);
+    const results = await Marker.findAll(query);
     res.json(results);
   })
   .get('/:id', async (req, res) => {
-    const check = await Check.findById(req.params.id);
+    const marker = await Marker.findById(req.params.id);
 
-    if (!check) throw httperrors.NotFound();
+    if (!marker) throw httperrors.NotFound();
 
-    res.json(check);
+    res.json(marker);
   })
   .post('', async (req, res) => {
     const payload = req.body;
 
-    const created = await Check.create(payload);
+    const created = await Marker.create(payload);
 
     res.json(created);
   })
-  .post('/:id', async (req, res) => {
-    const payload = req.body;
-
-    const updated = await Check.update(payload);
-
-    res.json(updated);
+  .delete('/:id', async (req, res) => {
+    res.json(Marker.delete(req.params.id));
   });

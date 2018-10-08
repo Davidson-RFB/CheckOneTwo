@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import { BrowserRouter as Route, Link } from "react-router-dom";
+import moment from "moment"
 
 class GroupsList extends Component {
   render() {
@@ -9,7 +10,7 @@ class GroupsList extends Component {
       <ul>
         {this.props.groups.map(group => {
         return <li key={group.id}>
-          <Link to={`${this.props.match.url}/${group.id}`}>{group.name}</Link>
+          <Link to={`${this.props.match.url}/${group.id}`}>{group.name}</Link> - Last Checked: {moment(group.last_checked_at).fromNow()}
         </li>
         })}
       </ul>
@@ -25,10 +26,24 @@ class GroupsList extends Component {
 
 class GroupView extends Component {
   render() {
+    const markersBySite = this.props.markers.reduce((ret, marker) => {
+      ret[marker.site_id] = marker;
+      return ret;
+    }, {});
+
+    const isInProg = site => !!markersBySite[site.id];
+
     return (
       <div>
         <h3>{this.props.group.name}</h3>
-        <textarea>{JSON.stringify(this.props.group, null, 2)}</textarea>
+        <h2>Sites:</h2>
+        { this.props.sites.map(site => {
+          return <div>
+            <Link to={"/sites/"+site.id}>{site.name}
+            </Link>{isInProg(site) ? <span> {markersBySite[site.id].submitted_by} is checking now, started {moment(markersBySite[site.id].created_at).fromNow()} -</span> : null} Last Checked: {moment(site.last_checked_at).fromNow()} - By {site.last_checked_by}
+          </div>
+        }) }
+        <Link to={"/add-site/"+this.props.group.id}>Add Site</Link>
       </div>
     );
   }
@@ -57,10 +72,11 @@ class GroupAdd extends Component {
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;
 
+    const group = this.state.group;
+    group[name] = value
+
     this.setState({
-      group: {
-        [name]: value,
-      }
+      group,
     });
   }
 

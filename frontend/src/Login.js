@@ -6,7 +6,7 @@ class LoginForm extends Component {
     this.state = {
       loading: false,
       loginPayload: {
-        email: '',
+        email: window.localStorage.email,
       }
     };
     this.handleSubmit = this.handleSubmit.bind(this);

@@ -1,5 +1,5 @@
 function postData(url = ``, data = {}) {
-  return fetch('v1/'+url, {
+  return fetch('/v1/'+url, {
     method: "POST",
     mode: "cors",
     cache: "no-cache",
@@ -21,6 +21,30 @@ function postData(url = ``, data = {}) {
     .then(response => response.json())
 }
 
+function deleteData(url = ``, data = {}) {
+  return fetch('/v1/'+url, {
+    method: "DELETE",
+    mode: "cors",
+    cache: "no-cache",
+    credentials: "same-origin",
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+      "Authorization": `Bearer ${window.localStorage.token}`,
+    },
+    redirect: "follow",
+    referrer: "no-referrer",
+    body: JSON.stringify(data),
+  })
+    .then(response => {
+      if (response.status === 401) {
+        window.location = '/login';
+      }
+      return response
+    })
+    .then(response => response.json())
+}
+
 export {
-  postData
+  postData,
+  deleteData,
 };

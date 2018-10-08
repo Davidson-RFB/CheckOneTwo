@@ -7,7 +7,7 @@ const { waitForDb } = require('../src/lib/util');
 waitForDb().then(() => {
   server.listen(PORT, () => {
     const { address, port } = server.address();
-    log.info('Ordermentum Boilerplate API listening at http://%s:%s', address, port);
+    log.info('Boilerplate API listening at http://%s:%s', address, port);
   });
 });
 

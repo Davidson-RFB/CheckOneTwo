@@ -2,9 +2,16 @@ import React, { Component } from "react";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import WithLoader from "./Loady.js"
 import { GroupAdd, GroupsList, GroupView } from "./Groups.js"
+import { SiteView, SiteAdd, ItemAdd } from "./Sites.js"
 import { LoginForm } from "./Login.js"
 import './App.css';
-import { postData } from './util.js';
+import { postData, deleteData } from './util.js';
+
+if (!window.localStorage.email) {
+  const email = prompt("Oh hi! What's your email address?");
+  window.localStorage.email = email;
+  window.location.reload();
+}
 
 const getData = async (key, path, _this) => {
   _this.setState({
@@ -26,6 +33,8 @@ const getData = async (key, path, _this) => {
   }
 
   _this.setState(newState);
+
+  return response.data;
 };
 
 class App extends Component {
@@ -89,6 +98,18 @@ class App extends Component {
           render={(props) => <GroupAdder {...passProps} {...props} />}
         />
         <Route
+          path={`/sites/:siteId`}
+          render={(props) => <Site {...passProps} {...props} />}
+        />
+        <Route
+          path={`/add-site/:groupId`}
+          render={(props) => <SiteAdder {...passProps} {...props} />}
+        />
+        <Route
+          path={`/add-item/:siteId`}
+          render={(props) => <ItemAdder {...passProps} {...props} />}
+        />
+        <Route
           path={`/login/:userId/:token`}
           render={(props) => <LoginSender {...passProps} {...props} />}
         />
@@ -128,18 +149,27 @@ class Group extends Component {
     super(props);
     this.state = {
       loading: true,
-      groups: {},
+      group: {},
+      sites: [],
+      markers: [],
     };
   }
 
   async componentDidMount() {
     await getData('group', '/v1/groups/'+this.props.match.params.groupId, this)
+    await getData('sites', '/v1/sites?by_group='+this.props.match.params.groupId, this)
+    await getData('markers', '/v1/markers?by_group='+this.props.match.params.groupId, this)
   }
 
   render() {
     const GroupWithLoader = WithLoader(GroupView)
     return (
-      <GroupWithLoader isLoading={this.state.loading} group={this.state.group} {...this.props} />
+      <GroupWithLoader
+        isLoading={this.state.loading}
+        group={this.state.group}
+        sites={this.state.sites}
+        markers={this.state.markers}
+        {...this.props} />
     );
   }
 };
@@ -155,7 +185,9 @@ class GroupAdder extends Component {
 
   handleSubmit(group) {
     postData(`groups`, group)
-      .then(data => console.log(JSON.stringify(data)))
+      .then(data => {
+        this.props.history.push(`/groups/${data.id}`);
+      })
       .catch(error => console.error(error));
   }
 
@@ -163,6 +195,127 @@ class GroupAdder extends Component {
     const GroupAddWithLoader = WithLoader(GroupAdd)
     return (
       <GroupAddWithLoader isLoading={this.state.loading} handleSubmit={this.handleSubmit} {...this.props} />
+    );
+  }
+}
+
+class Site extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      loading: true,
+      group: {},
+      site: {},
+    };
+  }
+
+  async componentDidMount() {
+    const site = await getData('site', '/v1/sites/'+this.props.match.params.siteId, this)
+    await getData('group', '/v1/groups/'+site.group_id, this)
+  }
+
+  async submitCheck(final, check) {
+    this.state.loading = true;
+
+    await postData('checks', check)
+    this.props.history.push(`/groups/${this.state.site.group_id}`);
+  }
+
+  async startCheck() {
+    this.state.loading = true;
+
+    try {
+      const marker = await postData('markers', {
+        site_id: this.props.match.params.siteId,
+        submitted_by: window.localStorage.email,
+      });
+
+      return marker;
+
+    } catch (e) {
+      this.props.errorHandler(e.toString());
+    }
+  }
+
+  async abandonCheck(marker) {
+    this.state.loading = true;
+
+    try {
+      await deleteData(`markers/${marker.id}`);
+      this.props.history.push(`/groups/${this.state.site.group_id}`);
+    } catch (e) {
+      this.props.errorHandler(e.toString());
+    }
+  }
+
+  render() {
+    const SiteWithLoader = WithLoader(SiteView)
+    return (
+      <SiteWithLoader
+        isLoading={this.state.loading}
+        group={this.state.group}
+        site={this.state.site}
+        submitCheck={this.submitCheck.bind(this)}
+        startCheck={this.startCheck.bind(this)}
+        abandonCheck={this.abandonCheck.bind(this)}
+        {...this.props} />
+    );
+  }
+};
+
+class SiteAdder extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      loading: false,
+    };
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleSubmit(site) {
+    postData(`sites`, site)
+      .then(data => {
+        this.props.history.push(`/groups/${this.props.match.params.groupId}`);
+      })
+      .catch(error => console.error(error));
+  }
+
+  render() {
+    const SiteAddWithLoader = WithLoader(SiteAdd)
+    return (
+      <SiteAddWithLoader groupId={this.props.match.params.groupId} isLoading={this.state.loading} handleSubmit={this.handleSubmit} {...this.props} />
+    );
+  }
+}
+
+class ItemAdder extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      loading: false,
+      site: {},
+    };
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  async componentDidMount() {
+    await getData('site', '/v1/sites/'+this.props.match.params.siteId, this)
+  }
+
+  handleSubmit(item) {
+    const site = this.state.site;
+    site.items.push(item);
+    postData(`sites/${this.state.site.id}`, site)
+      .then(data => {
+        this.props.history.push(`/sites/${this.props.match.params.siteId}`);
+      })
+      .catch(error => console.error(error));
+  }
+
+  render() {
+    const ItemAddWithLoader = WithLoader(ItemAdd)
+    return (
+      <ItemAddWithLoader site={this.state.site} isLoading={this.state.loading} handleSubmit={this.handleSubmit} {...this.props} />
     );
   }
 }
@@ -177,7 +330,7 @@ class LoginSender extends Component {
   }
 
   async componentDidMount() {
-    const user = await getData('token', '/v1/users/'+this.props.match.params.userId+'/login?token='+this.props.match.params.token, this)
+    await getData('token', '/v1/users/'+this.props.match.params.userId+'/login?token='+this.props.match.params.token, this)
 
     window.localStorage.token = this.state.token;
     window.location = '/';
@@ -202,8 +355,14 @@ class Login extends Component {
 
   handleSubmit(payload) {
     postData(`users/${payload.email}/send-login-token`, {})
-      .then(data => console.log(JSON.stringify(data)))
-      .catch(error => console.error(error)); // FIXME handle 404
+      .then(data => {
+        console.log(JSON.stringify(data))
+        if (data.error) this.props.errorHandler(data.error);
+      })
+      .catch(error => {
+        console.error(error)
+        this.props.errorHandler(error.toString());
+      });
   }
 
   render() {

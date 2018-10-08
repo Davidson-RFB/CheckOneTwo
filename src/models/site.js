@@ -12,10 +12,11 @@ const findLastChecked = async (input) => {
   const site = Object.assign({}, input);
 
   try {
-    const lastCheckResult = await db.query('SELECT created_at FROM checks WHERE site_id = $1 ORDER BY created_at DESC LIMIT 1', [site.id]);
+    const lastCheckResult = await db.query('SELECT created_at, submitted_by FROM checks WHERE site_id = $1 ORDER BY created_at DESC LIMIT 1', [site.id]);
     const check = lastCheckResult.rows[0];
 
     site.last_checked_at = check.created_at;
+    site.last_checked_by = check.submitted_by;
   } catch (e) {
     site.last_checked_at = new Date(0);
   }
@@ -52,7 +53,8 @@ const Site = {
   },
   create: async (site) => {
     if (!site.id) site.id = uuid.v4();
-    const result = await db.query('INSERT INTO sites(id, group_id, name, items) VALUES($1, $2, $3, $4) RETURNING *', [site.id, site.group_id, site.name, JSON.stringify(site.items.map(addUUIDs))]);
+    const items = site.items || [];
+    const result = await db.query('INSERT INTO sites(id, group_id, name, items) VALUES($1, $2, $3, $4) RETURNING *', [site.id, site.group_id, site.name, JSON.stringify(items.map(addUUIDs))]);
     return result.rows[0];
   },
   update: async (site) => {
