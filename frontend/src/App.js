@@ -430,6 +430,24 @@ class Site extends Component {
     }
   }
 
+  async deleteItem(targetItem) {
+    this.state.loading = true;
+
+    try {
+      const site = this.state.site;
+      site.items = site.items.filter(item => item.uuid !== targetItem.uuid);
+      const newSite = await postData(`sites/${site.id}`, site);
+      if (newSite.error) this.props.errorHandler(newSite.error);
+      this.setState({
+        loading: false,
+        site: newSite,
+      });
+    } catch (error) {
+      console.error(error)
+      this.props.errorHandler(error.toString());
+    }
+  }
+
   render() {
     const SiteWithLoader = WithLoader(SiteView)
     return (
@@ -440,6 +458,7 @@ class Site extends Component {
         submitCheck={this.submitCheck.bind(this)}
         startCheck={this.startCheck.bind(this)}
         abandonCheck={this.abandonCheck.bind(this)}
+        deleteItem={this.deleteItem.bind(this)}
         {...this.props} />
     );
   }

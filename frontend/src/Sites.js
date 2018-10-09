@@ -68,6 +68,10 @@ class SiteView extends Component {
     await this.props.abandonCheck(this.state.checkMarker);
   }
 
+  async deleteItem(item) {
+    await this.props.deleteItem(item);
+  }
+
   handleNote(item) {
     return (event) => {
       const existingItem = this.state.check.items.reduce((ret, i) => {
@@ -148,8 +152,19 @@ class SiteView extends Component {
                         /> : null
                     }
                   </div>
-                  : null }
-                </div>
+                  : this.state.editMode ?
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => {
+                      this.deleteItem(item);
+                    }}
+                  >
+                    <Icon>delete</Icon>
+                  </Button>
+                  : null
+                }
+              </div>
               return <ListItem>
                 <ListItemText primary={item.name} secondary={secondary}/>
               </ListItem>
@@ -157,14 +172,40 @@ class SiteView extends Component {
         </List>
         { this.state.checking ?
             null :
-            <Link to={"/add-item/"+this.props.site.id}>
-              <Button
-                variant="contained"
-                color="primary"
-              >
-                Add Item
-              </Button>
-            </Link>
+            <div>
+              <Link to={"/add-item/"+this.props.site.id}>
+                <Button
+                  variant="contained"
+                  color="primary"
+                >
+                  Add Item
+                </Button>
+              </Link>
+              { this.state.editMode ?
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => {
+                      this.setState({
+                        editMode: false,
+                      });
+                    }}
+                  >
+                    Stop Editing
+                  </Button> :
+                  <Button
+                    variant="contained"
+                    color="secondary"
+                    onClick={() => {
+                      this.setState({
+                        editMode: true,
+                      });
+                    }}
+                  >
+                    Edit List
+                  </Button>
+              }
+            </div>
         }
         { this.state.checking ?
             <Button
