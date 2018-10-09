@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import WithLoader from "./Loady.js"
 import { GroupAdd, GroupsList, GroupView } from "./Groups.js"
+import { NomineesList, NomineeAdd } from "./Nominees.js"
 import { ChecksList, CheckView } from "./Checks.js"
 import { SiteView, SiteAdd, ItemAdd, ItemHistoryView } from "./Sites.js"
 import { LoginForm } from "./Login.js"
@@ -101,6 +102,9 @@ class App extends Component {
             <Typography variant="title" color="inherit" className={classes.flex}>
               <Link className={classes.menuLink} to="/groups">Groups</Link>
             </Typography>
+            <Typography variant="title" color="inherit" className={classes.flex}>
+              <Link className={classes.menuLink} to="/nominees">Nominees</Link>
+            </Typography>
           </Toolbar>
         </AppBar>
 
@@ -110,6 +114,16 @@ class App extends Component {
           exact
           path="/groups"
           render={(props) => <Groups {...passProps} {...props} />}
+        />
+        <Route 
+          exact
+          path="/nominees"
+          render={(props) => <Nominees {...passProps} {...props} />}
+        />
+        <Route 
+          exact
+          path="/add-nominee"
+          render={(props) => <NomineeAdder {...passProps} {...props} />}
         />
         <Route
           path={`/groups/:groupId`}
@@ -154,6 +168,56 @@ class App extends Component {
       </div>
     </Router>
     )
+  }
+};
+
+class Nominees extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      nominees: [],
+      loading: true,
+    };
+  }
+
+  async componentDidMount() {
+    await getData('nominees', '/v1/nominees', this);
+  }
+
+  render() {
+    const ListWithLoader = WithLoader(NomineesList)
+    return (
+      <ListWithLoader isLoading={this.state.loading} nominees={this.state.nominees} {...this.props} />
+    );
+  }
+};
+
+class NomineeAdder extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      loading: false,
+    };
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleSubmit(nominee) {
+    postData(`nominees`, nominee)
+      .then(data => {
+        this.props.history.push(`/nominees`);
+        if (data.error) this.props.errorHandler(data.error);
+      })
+      .catch(error => {
+        console.error(error)
+        this.props.errorHandler(error.toString());
+      });
+  }
+
+  render() {
+    const AddWithLoader = WithLoader(NomineeAdd)
+    return (
+      <AddWithLoader isLoading={this.state.loading} handleSubmit={this.handleSubmit} {...this.props} />
+    );
   }
 };
 

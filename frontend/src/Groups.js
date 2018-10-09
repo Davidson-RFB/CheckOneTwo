@@ -11,6 +11,7 @@ import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 
 class GroupsList extends Component {
   render() {
+    this.props.groups.sort((a, b) => a.last_checked_at > b.last_checked_at);
     return <div>
       <h2>Groups</h2>
 
