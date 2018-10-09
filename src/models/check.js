@@ -24,15 +24,25 @@ const emailNominees = async (check) => {
 
 const Check = {
   findAll: async (params) => {
-    const query = ['SELECT id, site_id, items, submitted_by FROM checks'];
+    const query = ['SELECT id, site_id, items, submitted_by, created_at FROM checks'];
+
+    const args = [];
+
+    if (params.by_site) {
+      query.push('WHERE site_id = $1');
+      args.push(params.by_site);
+    }
+
+    query.push('ORDER BY created_at DESC');
+
     if (params.per_page && params.page) {
       query.push(`LIMIT ${params.per_page} OFFSET ${(params.page - 1) * params.per_page}`);
     }
-    const result = await db.query(query.join(' '));
+    const result = await db.query(query.join(' '), args);
     return result.rows;
   },
   findById: async (id) => {
-    const result = await db.query('SELECT id, site_id, items, submitted_by FROM checks WHERE id = $1', [id]);
+    const result = await db.query('SELECT id, site_id, items, submitted_by, created_at FROM checks WHERE id = $1', [id]);
     return result.rows[0];
   },
   create: async (check) => {

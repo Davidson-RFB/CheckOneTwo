@@ -66,6 +66,9 @@ class GroupView extends Component {
                     <ListItemText primary={site.name} secondary={secondary} />
                   </ListItem>
                 </Link>
+                <Link key={site.id} to={`/checks-by-site/${site.id}`}>
+                  Previous Checks
+                </Link>
 
               </div>
           }) }
@@ -139,4 +142,3 @@ export {
   GroupView,
   GroupsList,
 };
-

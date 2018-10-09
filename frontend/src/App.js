@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import WithLoader from "./Loady.js"
 import { GroupAdd, GroupsList, GroupView } from "./Groups.js"
+import { ChecksList, CheckView } from "./Checks.js"
 import { SiteView, SiteAdd, ItemAdd } from "./Sites.js"
 import { LoginForm } from "./Login.js"
 import './App.css';
@@ -119,6 +120,14 @@ class App extends Component {
           render={(props) => <GroupAdder {...passProps} {...props} />}
         />
         <Route
+          path={`/checks-by-site/:siteId`}
+          render={(props) => <Checks {...passProps} {...props} />}
+        />
+        <Route
+          path={`/checks/:checkId`}
+          render={(props) => <Check {...passProps} {...props} />}
+        />
+        <Route
           path={`/sites/:siteId`}
           render={(props) => <Site {...passProps} {...props} />}
         />
@@ -216,6 +225,57 @@ class GroupAdder extends Component {
     const GroupAddWithLoader = WithLoader(GroupAdd)
     return (
       <GroupAddWithLoader isLoading={this.state.loading} handleSubmit={this.handleSubmit} {...this.props} />
+    );
+  }
+}
+
+class Checks extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      checks: [],
+      loading: true,
+    };
+  }
+
+  async componentDidMount() {
+    await getData('checks', `/v1/checks?per_page=100&page=1&by_site=${this.props.match.params.siteId}`, this);
+  }
+
+  render() {
+    const ListWithLoader = WithLoader(ChecksList)
+    return (
+      <ListWithLoader isLoading={this.state.loading} checks={this.state.checks} {...this.props} />
+    );
+  }
+};
+
+class Check extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      check: {},
+      site: {},
+      group: {},
+      loading: true,
+    };
+  }
+
+  async componentDidMount() {
+    const check = await getData('check', `/v1/checks/${this.props.match.params.checkId}`, this);
+    const site = await getData('site', `/v1/sites/${check.site_id}`, this);
+    await getData('group', `/v1/groups/${site.group_id}`, this);
+  }
+
+  render() {
+    const ComponentWithLoader = WithLoader(CheckView)
+    return (
+      <ComponentWithLoader
+        isLoading={this.state.loading}
+        check={this.state.check}
+        site={this.state.site}
+        group={this.state.group}
+        {...this.props} />
     );
   }
 }
