@@ -397,15 +397,25 @@ class Site extends Component {
   }
 
   async submitCheck(final, check) {
-    this.state.loading = true;
+    this.setState({
+      loading: true,
+    })
 
-    await postData('checks', check)
+    try {
+      await postData('checks', check)
+    } catch (e) {
+      this.setState({
+        loading: false,
+      })
+      this.props.errorHandler(e.toString());
+    }
     this.props.history.push(`/groups/${this.state.site.group_id}`);
+    this.setState({
+      loading: false,
+    })
   }
 
   async startCheck() {
-    this.state.loading = true;
-
     try {
       const marker = await postData('markers', {
         site_id: this.props.match.params.siteId,
