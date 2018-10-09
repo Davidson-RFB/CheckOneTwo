@@ -36,6 +36,7 @@ class GroupsList extends Component {
 
 class GroupView extends Component {
   render() {
+    this.props.sites.sort((a, b) => a.last_checked_at > b.last_checked_at);
     const markersBySite = this.props.markers.reduce((ret, marker) => {
       ret[marker.site_id] = marker;
       return ret;
