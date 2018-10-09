@@ -39,7 +39,7 @@ process.nextTick(() => {
     }
   });
   after('clear db', async () => {
-    await db.query('TRUNCATE checks, groups, nominees, sites, users, things');
+    await db.query('TRUNCATE markers, checks, groups, nominees, sites, users, things');
   });
 });
 
