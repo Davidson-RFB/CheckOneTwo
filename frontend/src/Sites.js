@@ -1,6 +1,13 @@
 import React, { Component } from "react";
 import { BrowserRouter as Route, Link } from "react-router-dom";
 
+import Button from '@material-ui/core/Button';
+import Icon from '@material-ui/core/Icon';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import TextField from '@material-ui/core/TextField';
+
 class SiteView extends Component {
   constructor(props) {
     super(props);
@@ -56,8 +63,30 @@ class SiteView extends Component {
   }
 
   async abandonCheck() {
-    console.log('DEBUG this.state', this.state);
     await this.props.abandonCheck(this.state.checkMarker);
+  }
+
+  handleNote(item) {
+    return (event) => {
+      const existingItem = this.state.check.items.reduce((ret, i) => {
+        if (i.uuid === item.uuid) {
+          return i;
+        }
+        return ret;
+      }, {});
+      existingItem.notes = event.target.value;
+      const items = this.state.check.items.map(i => {
+        if (i.uuid === existingItem.uuid) return existingItem;
+        return i;
+      });
+
+      const check = this.state.check;
+      check.items = items;
+
+      this.setState({
+        check,
+      });
+    }
   }
 
   render() {
@@ -67,46 +96,78 @@ class SiteView extends Component {
 
         { this.state.checking ?
             null :
-            <button 
+            <Button
+              variant="contained"
+              color="primary"
               onClick={() => {
                 this.startCheck()
-              }}>Start Check</button>
+              }}
+            >
+              Start Check
+            </Button>
         }
 
         <h2>Items:</h2>
-        { (this.props.site.items || []).map(item => {
-          return <div>
-            <p>{item.name}</p>
-            { this.state.checking ?
-                <div>
-                  <button 
-                    style={{
-                      'border-style': 
-                      this.isMarked(item.uuid) && this.isGood(item.uuid) ?
-                      "inset" : ""
-                    }}
-                    onClick={() => {
-                      this.mark('pass', item)
-                    }}>Good</button>
-                  <button 
-                    style={{
-                      'border-style': 
+        <List>
+          { (this.props.site.items || []).map(item => {
+            const secondary = <div>
+              { this.state.checking ?
+                  <div>
+                    <Button 
+                      variant={
+                        this.isMarked(item.uuid) && !this.isGood(item.uuid) ?
+                          'contained' : 'text'
+                      }
+                      color="secondary"
+                      size="large"
+                      onClick={() => {
+                        this.mark('fail', item)
+                      }}><Icon>report</Icon></Button>
+                    <Button
+                      variant={
+                        this.isMarked(item.uuid) && this.isGood(item.uuid) ?
+                          'contained' : 'text'
+                      }
+                      color="primary"
+                      size="large"
+                      onClick={() => {
+                        this.mark('pass', item)
+                      }}><Icon>check</Icon></Button>
+
+                    <br />
+                    {
                       this.isMarked(item.uuid) && !this.isGood(item.uuid) ?
-                      "inset" : ""
-                    }}
-                    onClick={() => {
-                      this.mark('fail', item)
-                    }}>Bad</button>
+                        <TextField
+                          id={`${item.uuid}-notes`}
+                          label="What's wrong?"
+                          value={item.notes}
+                          onChange={this.handleNote(item, 'name')}
+                          margin="normal"
+                        /> : null
+                    }
+                  </div>
+                  : null }
                 </div>
-                : null }
-          </div>
-        }) }
+              return <ListItem>
+                <ListItemText primary={item.name} secondary={secondary}/>
+              </ListItem>
+          }) }
+        </List>
         { this.state.checking ?
             null :
-            <Link to={"/add-item/"+this.props.site.id}>Add Item</Link>
+            <Link to={"/add-item/"+this.props.site.id}>
+              <Button
+                variant="contained"
+                color="primary"
+              >
+                Add Item
+              </Button>
+            </Link>
         }
         { this.state.checking ?
-            <button 
+            <Button 
+              variant="contained"
+              color="primary"
               onClick={() => {
                 const complete = this.props.site.items.reduce((ret, item) => {
                   if (!ret) return ret;
@@ -119,14 +180,16 @@ class SiteView extends Component {
                 } else {
                   this.props.submitCheck(true, this.state.check);
                 }
-              }}>Finish Check</button>
+              }}>Finish Check</Button>
             : null
         }
         { this.state.checking ?
-            <button 
+            <Button
+              variant="contained"
+              color="secondary"
               onClick={() => {
                 this.abandonCheck();
-              }}>Abandon Check</button>
+              }}>Abandon Check</Button>
             : null
         }
       </div>
@@ -178,7 +241,16 @@ class SiteAdd extends Component {
               onChange={this.handleChange}>
             </input>
           </label>
-          <input type="submit" value="Submit" />
+          <Button
+            variant="contained"
+            color="primary"
+            type="submit"
+            onClick={() => {
+              this.startCheck()
+            }}
+          >
+            Submit
+          </Button>
         </form>
       </div>
     )

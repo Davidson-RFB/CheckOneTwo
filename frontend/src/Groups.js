@@ -2,18 +2,25 @@ import React, { Component } from "react";
 import { BrowserRouter as Route, Link } from "react-router-dom";
 import moment from "moment"
 
+import Button from '@material-ui/core/Button';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+
 class GroupsList extends Component {
   render() {
     return <div>
       <h2>Groups</h2>
 
-      <ul>
+      <List>
         {this.props.groups.map(group => {
-        return <li key={group.id}>
-          <Link to={`${this.props.match.url}/${group.id}`}>{group.name}</Link> - Last Checked: {moment(group.last_checked_at).fromNow()}
-        </li>
+          return <Link key={group.id} to={`${this.props.match.url}/${group.id}`}>
+            <ListItem>
+              <ListItemText primary={group.name} secondary={"Last Checked: "+moment(group.last_checked_at).fromNow()} />
+            </ListItem>
+          </Link>
         })}
-      </ul>
+      </List>
 
       <Route
         exact
@@ -37,13 +44,38 @@ class GroupView extends Component {
       <div>
         <h3>{this.props.group.name}</h3>
         <h2>Sites:</h2>
-        { this.props.sites.map(site => {
-          return <div>
-            <Link to={"/sites/"+site.id}>{site.name}
-            </Link>{isInProg(site) ? <span> {markersBySite[site.id].submitted_by} is checking now, started {moment(markersBySite[site.id].created_at).fromNow()} -</span> : null} Last Checked: {moment(site.last_checked_at).fromNow()} - By {site.last_checked_by}
-          </div>
-        }) }
-        <Link to={"/add-site/"+this.props.group.id}>Add Site</Link>
+
+        <List>
+          { this.props.sites.map(site => {
+            const statusElems = [];
+
+            if (isInProg(site)) {
+              statusElems.push(`${markersBySite[site.id].submitted_by} is checking now, started ${moment(markersBySite[site.id].created_at).fromNow()}`);
+            }
+
+            statusElems.push(`Last Checked: ${moment(site.last_checked_at).fromNow()}`);
+            statusElems.push(`By ${site.last_checked_by}`);
+
+            const secondary = <div>
+              {statusElems.map(line => <p>{line}</p>)}
+            </div>
+
+              return <div>
+                <Link key={site.id} to={`/sites/${site.id}`}>
+                  <ListItem>
+                    <ListItemText primary={site.name} secondary={secondary} />
+                  </ListItem>
+                </Link>
+
+              </div>
+          }) }
+        </List>
+
+        <Link to={"/add-site/"+this.props.group.id}>
+          <Button variant="contained" color="primary">
+            Add Site
+          </Button>
+        </Link>
       </div>
     );
   }
@@ -93,7 +125,9 @@ class GroupAdd extends Component {
               onChange={this.handleChange}>
             </input>
           </label>
-          <input type="submit" value="Submit" />
+          <Button type="submit" variant="contained" color="primary">
+            Submit
+          </Button>
         </form>
       </div>
     )
@@ -105,3 +139,4 @@ export {
   GroupView,
   GroupsList,
 };
+

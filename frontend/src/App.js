@@ -6,6 +6,13 @@ import { SiteView, SiteAdd, ItemAdd } from "./Sites.js"
 import { LoginForm } from "./Login.js"
 import './App.css';
 import { postData, deleteData } from './util.js';
+import { withStyles } from '@material-ui/core/styles';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import Button from '@material-ui/core/Button';
+import IconButton from '@material-ui/core/IconButton';
+import MenuIcon from '@material-ui/icons/Menu';
 
 if (!window.localStorage.email) {
   const email = prompt("Oh hi! What's your email address?");
@@ -35,6 +42,19 @@ const getData = async (key, path, _this) => {
   _this.setState(newState);
 
   return response.data;
+};
+
+const styles = {
+  root: {
+    flexGrow: 1,
+  },
+  flex: {
+    flexGrow: 1,
+  },
+  menuLink: {
+    color: 'white',
+    'text-decoration': 'none',
+  },
 };
 
 class App extends Component {
@@ -68,19 +88,20 @@ class App extends Component {
       </div>)
     }
 
+    const { classes } = this.props;
+
     return (<Router>
       <div>
-        <ul>
-          <li>
-            <Link to="/">Home</Link>
-          </li>
-          <li>
-            <Link to="/groups">Groups</Link>
-          </li>
-          <li>
-            <Link to="/add-group">Add Group</Link>
-          </li>
-        </ul>
+        <AppBar position="static">
+          <Toolbar>
+            <Typography variant="title" color="inherit" className={classes.flex}>
+              <Link className={classes.menuLink} to="/">Home</Link>
+            </Typography>
+            <Typography variant="title" color="inherit" className={classes.flex}>
+              <Link className={classes.menuLink} to="/groups">Groups</Link>
+            </Typography>
+          </Toolbar>
+        </AppBar>
 
         <hr />
 
@@ -373,4 +394,4 @@ class Login extends Component {
   }
 }
 
-export default App;
+export default withStyles(styles)(App);
