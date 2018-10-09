@@ -9,6 +9,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Avatar from '@material-ui/core/Avatar';
 import TextField from '@material-ui/core/TextField';
+import Grid from '@material-ui/core/Grid';
 
 class SiteView extends Component {
   constructor(props) {
@@ -102,18 +103,24 @@ class SiteView extends Component {
 
         { this.state.checking ?
             null :
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => {
-                this.startCheck()
-              }}
+            <Grid
+              container
+              direction="row"
+              justify="space-evenly"
+              alignItems="flex-start"
             >
-              Start Check
-            </Button>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => {
+                  this.startCheck()
+                }}
+              >
+                Start Check
+              </Button>
+            </Grid>
         }
 
-        <h2>Items:</h2>
         <List>
           { (this.props.site.items || []).map(item => {
             const secondary = <div>
@@ -170,42 +177,48 @@ class SiteView extends Component {
               </ListItem>
           }) }
         </List>
+        <Grid
+          container
+          direction="row"
+          justify="space-evenly"
+          alignItems="flex-start"
+        >
         { this.state.checking ?
             null :
-            <div>
-              <Link to={"/add-item/"+this.props.site.id}>
-                <Button
-                  variant="contained"
-                  color="primary"
-                >
-                  Add Item
-                </Button>
-              </Link>
-              { this.state.editMode ?
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    onClick={() => {
-                      this.setState({
-                        editMode: false,
-                      });
-                    }}
-                  >
-                    Stop Editing
-                  </Button> :
-                  <Button
-                    variant="contained"
-                    color="secondary"
-                    onClick={() => {
-                      this.setState({
-                        editMode: true,
-                      });
-                    }}
-                  >
-                    Edit List
-                  </Button>
-              }
-            </div>
+            <Link to={"/add-item/"+this.props.site.id}>
+              <Button
+                variant="contained"
+                color="primary"
+              >
+                Add Item
+              </Button>
+            </Link>
+        }
+        { this.state.checking ?
+            null :
+            this.state.editMode ?
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => {
+                this.setState({
+                  editMode: false,
+                });
+              }}
+            >
+              Stop Editing
+            </Button> :
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => {
+                this.setState({
+                  editMode: true,
+                });
+              }}
+            >
+              Edit List
+            </Button>
         }
         { this.state.checking ?
             <Button
@@ -235,7 +248,8 @@ class SiteView extends Component {
               }}>Finish Check</Button>
             : null
         }
-      </div>
+      </Grid>
+    </div>
     );
   }
 }

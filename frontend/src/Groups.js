@@ -8,6 +8,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import Grid from '@material-ui/core/Grid';
 
 class GroupsList extends Component {
   render() {
@@ -24,6 +25,22 @@ class GroupsList extends Component {
           </Link>
         })}
       </List>
+
+      <Grid
+        container
+        direction="row"
+        justify="space-evenly"
+        alignItems="flex-start"
+      >
+        <Link to={"/add-group"}>
+          <Button
+            variant="contained"
+            color="primary"
+          >
+            Add Group
+          </Button>
+        </Link>
+      </Grid>
 
       <Route
         exact

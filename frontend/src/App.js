@@ -50,12 +50,13 @@ const getData = async (key, path, _this) => {
 const styles = {
   root: {
     flexGrow: 1,
+    textAlign: 'center',
   },
   flex: {
     flexGrow: 1,
   },
   menuLink: {
-    color: 'white',
+    color: 'black',
     'text-decoration': 'none',
   },
 };
@@ -94,22 +95,20 @@ class App extends Component {
     const { classes } = this.props;
 
     return (<Router>
-      <div>
-        <AppBar position="static">
+      <div className={classes.root}>
+        <AppBar position="static" color="default">
           <Toolbar>
-            <Typography variant="title" color="inherit" className={classes.flex}>
+            <Typography variant="h6" color="inherit" className={classes.flex}>
               <Link className={classes.menuLink} to="/">Home</Link>
             </Typography>
-            <Typography variant="title" color="inherit" className={classes.flex}>
+            <Typography variant="h6" color="inherit" className={classes.flex}>
               <Link className={classes.menuLink} to="/groups">Groups</Link>
             </Typography>
-            <Typography variant="title" color="inherit" className={classes.flex}>
+            <Typography variant="h6" color="inherit" className={classes.flex}>
               <Link className={classes.menuLink} to="/nominees">Nominees</Link>
             </Typography>
           </Toolbar>
         </AppBar>
-
-        <hr />
 
         <Grid
           container
@@ -179,8 +178,8 @@ class App extends Component {
           render={(props) => <Login {...passProps} {...props} />}
         />
       </Grid>
-      </div>
-    </Router>
+    </div>
+  </Router>
     )
   }
 };
@@ -562,7 +561,7 @@ class ItemHistory extends Component {
         group={this.state.group}
         itemName={this.state.itemName}
         isLoading={this.state.loading}
-      {...this.props} />
+        {...this.props} />
     );
   }
 }
