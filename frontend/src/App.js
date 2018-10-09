@@ -15,6 +15,7 @@ import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import IconButton from '@material-ui/core/IconButton';
 import MenuIcon from '@material-ui/icons/Menu';
+import Grid from '@material-ui/core/Grid';
 
 if (!window.localStorage.email) {
   const email = prompt("Oh hi! What's your email address?");
@@ -110,6 +111,13 @@ class App extends Component {
 
         <hr />
 
+        <Grid
+          container
+          direction="row"
+          justify="space-evenly"
+          alignItems="flex-start"
+        >
+
         <Route
           exact
           path="/"
@@ -170,6 +178,7 @@ class App extends Component {
           path={`/login`}
           render={(props) => <Login {...passProps} {...props} />}
         />
+      </Grid>
       </div>
     </Router>
     )
