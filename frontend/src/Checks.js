@@ -8,6 +8,7 @@ import Icon from '@material-ui/core/Icon';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 
 class ChecksList extends Component {
   render() {
@@ -56,6 +57,11 @@ class CheckView extends Component {
               }
             </Avatar>
             <ListItemText primary={item.name} secondary={item.notes}/>
+            <ListItemSecondaryAction>
+              <Link to={`/item-history/${this.props.site.id}/${item.uuid}`}>
+                <Icon>history</Icon>
+              </Link>
+            </ListItemSecondaryAction>
           </ListItem>
         })}
       </List>

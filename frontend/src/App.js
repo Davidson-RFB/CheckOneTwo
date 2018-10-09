@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 import WithLoader from "./Loady.js"
 import { GroupAdd, GroupsList, GroupView } from "./Groups.js"
 import { ChecksList, CheckView } from "./Checks.js"
-import { SiteView, SiteAdd, ItemAdd } from "./Sites.js"
+import { SiteView, SiteAdd, ItemAdd, ItemHistoryView } from "./Sites.js"
 import { LoginForm } from "./Login.js"
 import './App.css';
 import { postData, deleteData } from './util.js';
@@ -138,6 +138,10 @@ class App extends Component {
         <Route
           path={`/add-item/:siteId`}
           render={(props) => <ItemAdder {...passProps} {...props} />}
+        />
+        <Route
+          path={`/item-history/:siteId/:itemId`}
+          render={(props) => <ItemHistory {...passProps} {...props} />}
         />
         <Route
           path={`/login/:userId/:token`}
@@ -397,6 +401,42 @@ class ItemAdder extends Component {
     const ItemAddWithLoader = WithLoader(ItemAdd)
     return (
       <ItemAddWithLoader site={this.state.site} isLoading={this.state.loading} handleSubmit={this.handleSubmit} {...this.props} />
+    );
+  }
+}
+
+class ItemHistory extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      loading: false,
+      history: {
+        site: {},
+        checks: [],
+      },
+      group: {},
+      itemName: '',
+    };
+  }
+
+  async componentDidMount() {
+    const history = await getData('history', `/v1/sites/${this.props.match.params.siteId}/item-history/${this.props.match.params.itemId}?per_page=100&page=1`, this);
+    this.setState({
+      itemName: history.checks[0].items[0].name,
+    });
+    await getData('group', '/v1/groups/'+history.site.group_id, this);
+  }
+
+  render() {
+    const WithLoaderComponent = WithLoader(ItemHistoryView)
+    return (
+      <WithLoaderComponent
+        site={this.state.history.site}
+        checks={this.state.history.checks}
+        group={this.state.group}
+        itemName={this.state.itemName}
+        isLoading={this.state.loading}
+      {...this.props} />
     );
   }
 }

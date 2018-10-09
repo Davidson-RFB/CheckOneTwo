@@ -17,6 +17,18 @@ module.exports = new Router()
 
     res.json(site);
   })
+  .get('/:id/item-history/:uuid', async (req, res) => {
+    const site = await Site.findById(req.params.id);
+    const query = pagination(req.query);
+
+    if (!site) throw httperrors.NotFound();
+
+    const checks = await Site.itemHistory(req.params.uuid, query);
+
+    if (!checks) throw httperrors.NotFound();
+
+    res.json({ site, checks });
+  })
   .use('', demandUser)
   .post('', async (req, res) => {
     const payload = req.body;

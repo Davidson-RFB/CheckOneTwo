@@ -3,9 +3,11 @@ import { BrowserRouter as Route, Link } from "react-router-dom";
 import moment from "moment"
 
 import Button from '@material-ui/core/Button';
+import Icon from '@material-ui/core/Icon';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 
 class GroupsList extends Component {
   render() {
@@ -64,10 +66,12 @@ class GroupView extends Component {
                 <Link key={site.id} to={`/sites/${site.id}`}>
                   <ListItem>
                     <ListItemText primary={site.name} secondary={secondary} />
+                    <ListItemSecondaryAction>
+                      <Link to={`/checks-by-site/${site.id}`}>
+                        <Icon>history</Icon>
+                      </Link>
+                    </ListItemSecondaryAction>
                   </ListItem>
-                </Link>
-                <Link key={site.id} to={`/checks-by-site/${site.id}`}>
-                  Previous Checks
                 </Link>
 
               </div>

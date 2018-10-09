@@ -1,3 +1,4 @@
+const httperrors = require('httperrors');
 const uuid = require('uuid');
 const { db } = require('../../config');
 
@@ -5,6 +6,8 @@ const addUUIDs = (i) => {
   if (!i.uuid) i.uuid = uuid.v4();
   return i;
 };
+
+const validUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 const findLastChecked = async (input) => {
   if (!input) return input;
@@ -61,6 +64,25 @@ const Site = {
     const now = new Date().toISOString();
     const result = await db.query('UPDATE sites SET (group_id, name, items, updated_at) = ($2, $3, $4, $5) WHERE id = $1 RETURNING *', [site.id, site.group_id, site.name, JSON.stringify(site.items.map(addUUIDs)), now]);
     return result.rows[0];
+  },
+  itemHistory: async (itemId, params) => {
+    if (!validUuid.test(itemId)) throw httperrors.BadRequest('invalid uuid');
+    const query = [`SELECT items, id, created_at, submitted_by FROM checks WHERE items @> '[{"uuid": "${itemId}"}]'`];
+
+    query.push('ORDER BY created_at DESC');
+
+    if (params.per_page && params.page) {
+      query.push(`LIMIT ${params.per_page} OFFSET ${(params.page - 1) * params.per_page}`);
+    }
+
+    const result = await db.query(query.join(' '));
+
+    const checks = result.rows.map((row) => {
+      row.items = row.items.filter(item => item.uuid === itemId);
+      return row;
+    });
+
+    return checks;
   },
 };
 

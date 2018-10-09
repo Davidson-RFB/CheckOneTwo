@@ -1,11 +1,13 @@
 import React, { Component } from "react";
 import { BrowserRouter as Route, Link } from "react-router-dom";
+import moment from 'moment';
 
 import Button from '@material-ui/core/Button';
 import Icon from '@material-ui/core/Icon';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+import Avatar from '@material-ui/core/Avatar';
 import TextField from '@material-ui/core/TextField';
 
 class SiteView extends Component {
@@ -197,6 +199,42 @@ class SiteView extends Component {
   }
 }
 
+class ItemHistoryView extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {}
+  }
+
+  render() {
+    return <div>
+      <h2>History of {this.props.itemName} in {this.props.site.name} on {this.props.group.name}</h2>
+
+      <List>
+        {this.props.checks.map(check => {
+          const item = check.items[0];
+          return <Link key={check.id} to={`/checks/${check.id}`}>
+            <ListItem>
+              <Avatar>
+                { item.status === 'fail' ?
+                    <Icon color="secondary">report</Icon> :
+                    <Icon color="primary">check</Icon>
+                }
+              </Avatar>
+              <ListItemText primary={`${moment(check.created_at).fromNow()} - ${check.submitted_by}`} secondary={item.notes} />
+            </ListItem>
+          </Link>
+        })}
+      </List>
+
+      <Route
+        exact
+        path={this.props.match.url}
+        render={() => <h3>Please select a group.</h3>}
+      />
+    </div>
+  }
+}
+
 class SiteAdd extends Component {
   constructor(props) {
     super(props);
@@ -311,4 +349,5 @@ export {
   SiteAdd,
   SiteView,
   ItemAdd,
+  ItemHistoryView,
 };
