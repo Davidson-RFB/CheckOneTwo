@@ -110,6 +110,11 @@ class App extends Component {
 
         <hr />
 
+        <Route
+          exact
+          path="/"
+          render={(props) => <Welcome {...passProps} {...props} />}
+        />
         <Route 
           exact
           path="/groups"
@@ -170,6 +175,25 @@ class App extends Component {
     )
   }
 };
+
+class Welcome extends Component {
+  render() {
+    return <div>
+      <h2>Check One Two</h2>
+      <p>Hi! Welcome to Davidson RFB's checklist application.</p>
+      <p>This has been built to make running the weekly duty crew checklists faster and more efficient for everyone.</p>
+      <p>It should mean you spend less time in the shed and more time in the field with complete, working equipment.</p>
+      <Link to="/groups">
+        <Button
+          variant="contained"
+          color="primary"
+        >
+          Get Started
+        </Button>
+      </Link>
+    </div>
+  }
+}
 
 class Nominees extends Component {
   constructor(props) {
