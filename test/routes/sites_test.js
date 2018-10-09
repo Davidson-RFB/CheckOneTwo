@@ -36,13 +36,6 @@ describe('/v1/sites', () => {
       const response = await app.get('/v1/sites', { by_group: newFixture.group_id });
       expect(response.body.length).to.equal(1);
     });
-
-    it('must deny an unauthorised user', async () => {
-      const response = await app.get('/v1/sites', {}, {
-        Authorization: null,
-      });
-      expect(response.status).to.equal(401);
-    });
   });
 
   describe('GET/:id', () => {
@@ -54,13 +47,6 @@ describe('/v1/sites', () => {
     it('must return 404 for a missing site', async () => {
       const response = await app.get(`/v1/sites/${uuid.v4()}`);
       expect(response.status).to.equal(404);
-    });
-
-    it('must deny an unauthorised user', async () => {
-      const response = await app.get(`/v1/sites/${uuid.v4()}`, {}, {
-        Authorization: null,
-      });
-      expect(response.status).to.equal(401);
     });
   });
 });

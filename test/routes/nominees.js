@@ -29,13 +29,6 @@ describe('/v1/nominees', () => {
       const response = await app.get('/v1/nominees', { per_page: 2 });
       expect(response.body.length).to.equal(2);
     });
-
-    it('must deny an unauthorised user', async () => {
-      const response = await app.get('/v1/nominees', {}, {
-        Authorization: null,
-      });
-      expect(response.status).to.equal(401);
-    });
   });
 
   describe('GET/:id', () => {
@@ -47,13 +40,6 @@ describe('/v1/nominees', () => {
     it('must return 404 for a missing nominee', async () => {
       const response = await app.get(`/v1/nominees/${uuid.v4()}`);
       expect(response.status).to.equal(404);
-    });
-
-    it('must deny an unauthorised user', async () => {
-      const response = await app.get(`/v1/nominees/${uuid.v4()}`, {}, {
-        Authorization: null,
-      });
-      expect(response.status).to.equal(401);
     });
   });
 });
