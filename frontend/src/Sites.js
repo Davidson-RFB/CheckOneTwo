@@ -167,6 +167,15 @@ class SiteView extends Component {
             </Link>
         }
         { this.state.checking ?
+            <Button
+              variant="contained"
+              color="secondary"
+              onClick={() => {
+                this.abandonCheck();
+              }}>Abandon Check</Button>
+            : null
+        }
+        { this.state.checking ?
             <Button 
               variant="contained"
               color="primary"
@@ -183,15 +192,6 @@ class SiteView extends Component {
                   this.props.submitCheck(true, this.state.check);
                 }
               }}>Finish Check</Button>
-            : null
-        }
-        { this.state.checking ?
-            <Button
-              variant="contained"
-              color="secondary"
-              onClick={() => {
-                this.abandonCheck();
-              }}>Abandon Check</Button>
             : null
         }
       </div>
