@@ -1,4 +1,5 @@
 const { Router } = require('express');
+const express = require('express');
 const users = require('./users');
 const groups = require('./groups');
 const sites = require('./sites');
@@ -18,4 +19,9 @@ const v1 = new Router()
 
 const router = module.exports = new Router();
 
+router.get('/health', (req, res) => {
+  res.send('ok');
+});
+
 router.use('/v1', v1);
+router.use(express.static('./frontend/build'))
