@@ -21,7 +21,7 @@ module.exports = new Router()
           name: username,
         });
       } else {
-        throw httperrors.NotFound();
+        throw httperrors.NotFound("That email domain is not whitelisted and there is no user account created for your address.");
       }
     }
 
