@@ -42,10 +42,12 @@ const send = (to, subject, body) => new Promise((resolve, reject) => {
       if (error) return reject(error);
 
       if (process.env.SMTP_HOST === 'smtp.ethereal.email') {
-        console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info)); // eslint-disable-line no-console
+        const testMessageUrl = nodemailer.getTestMessageUrl(info);
+        console.log('Preview URL: %s', testMessageUrl); // eslint-disable-line no-console
+        return resolve('Test mode. Preview email at: '+testMessageUrl);
       }
 
-      return resolve();
+      return resolve('Email sent! Check your inbox and click the link in the email to log in.');
     });
   }
 });

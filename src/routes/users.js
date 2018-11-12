@@ -28,9 +28,9 @@ module.exports = new Router()
     const salt = await bcrypt.genSalt(config.SALT_ROUNDS);
     const token = await bcrypt.hash(user.id + config.TOKEN_SECRET, salt);
 
-    await config.mail.sendLoginToken(user.email, user.id, token);
+    const message = await config.mail.sendLoginToken(user.email, user.id, token);
 
-    res.json({ ok: true });
+    res.json({ message });
   })
   .get('/:id/login', async (req, res) => {
     const user = await User.findById(req.params.id);

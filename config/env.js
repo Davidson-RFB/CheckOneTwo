@@ -16,6 +16,10 @@ const environmentVariables = [
   'COOKIE_SECRET',
   'TOKEN_SECRET',
   {
+    var: 'APP_URI',
+    default: 'localhost',
+  },
+  {
     var: 'SALT_ROUNDS',
     default: '10',
   },

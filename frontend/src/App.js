@@ -600,21 +600,31 @@ class Login extends Component {
   }
 
   handleSubmit(payload) {
-    postData(`users/${payload.email}/send-login-token`, {})
+    this.setState({
+      loading: true,
+    });
+    return postData(`users/${payload.email}/send-login-token`, {})
       .then(data => {
-        console.log(JSON.stringify(data))
         if (data.error) this.props.errorHandler(data.error);
+        this.setState({
+          loading: false,
+          message: data.message,
+        });
       })
       .catch(error => {
         console.error(error)
         this.props.errorHandler(error.toString());
+        this.setState({
+          loading: false,
+          message: error.toString(),
+        });
       });
   }
 
   render() {
     const LoginFormWithLoader = WithLoader(LoginForm)
     return (
-      <LoginFormWithLoader isLoading={this.state.loading} handleSubmit={this.handleSubmit} {...this.props} />
+      <LoginFormWithLoader isLoading={this.state.loading} message={this.state.message} handleSubmit={this.handleSubmit} {...this.props} />
     );
   }
 }

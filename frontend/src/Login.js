@@ -13,7 +13,7 @@ class LoginForm extends Component {
     this.handleChange = this.handleChange.bind(this);
   }
 
-  handleSubmit(event) {
+  async handleSubmit(event) {
     event.preventDefault();
     this.props.handleSubmit(this.state.loginPayload);
   }
@@ -31,6 +31,13 @@ class LoginForm extends Component {
   }
 
   render() {
+    if (this.props.message) {
+      return (
+        <div>
+          <p>{this.props.message}</p>
+        </div>
+      )
+    }
     return (
       <div>
         <p>You must log in to access this portion of the application.</p>
