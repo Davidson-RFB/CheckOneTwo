@@ -1,0 +1,88 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+  labels:
+    run: __NAME__
+  name: __NAME__
+  namespace: __NAMESPACE__
+spec:
+  selector:
+    matchLabels:
+      run: __NAME__
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        run: __NAME__
+    spec:
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      containers:
+        - image: gcr.io/__PROJECT__/__IMAGE__:__HASH_TAG__
+          imagePullPolicy: __PULL_POLICY__
+          env:
+            - name: PORT
+              value: "80"
+            - name: ENVIRONMENT
+              value: __STAGE__
+            - name: STAGE
+              value: __STAGE__
+            - name: WHITELIST_DOMAIN
+              value: "davidsonrfb.org.au"
+            - name: TOKEN_SECRET
+              value: "a13ab5c0-84fc-495c-83ac-eb86d01704a8"
+            - name: COOKIE_SECRET
+              value: "2481f03a-fb1f-473b-944d-b877f85bb8fd"
+            - name: DISABLE_AUTH
+              value: "false"
+            - name: AUTH_PASS
+              value: "d53ae8ab-4da4-4006-a325-635c88dcef3f"
+            - name: AUTH_USER
+              value: "c1b3c055-db4c-4d16-99c9-30c25eb27351"
+            - name: DATABASE_URI
+              value: "postgres://fqwhlujw:zncM82lukTLOIVnmX_SR50NyICQztCeR@stampy.db.elephantsql.com:5432/fqwhlujw"
+          name: __NAME__
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 80
+            initialDelaySeconds: 5
+            timeoutSeconds: 1
+            periodSeconds: 10
+            failureThreshold: 3
+          ports:
+            - containerPort: 3000
+              name: http
+              protocol: TCP
+          volumeMounts:
+          - mountPath: /etc/ssl/certs
+            name: ca-certificates
+      volumes:
+        - name: ca-certificates
+          hostPath:
+            path: /etc/ssl/certs
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: __NAME__
+  namespace: __NAMESPACE__
+spec:
+  ports:
+  - port: 443
+    name: https
+    protocol: TCP
+    targetPort: 443
+  - port: 80
+    name: http
+    protocol: TCP
+    targetPort: 80
+  selector:
+    run: __NAME__
+  type: LoadBalancer
