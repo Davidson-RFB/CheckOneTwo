@@ -595,6 +595,8 @@ class Login extends Component {
     super(props);
     this.state = {
       loading: false,
+      message: null,
+      url: null,
     };
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -609,6 +611,7 @@ class Login extends Component {
         this.setState({
           loading: false,
           message: data.message,
+          url: data.url,
         });
       })
       .catch(error => {
@@ -624,7 +627,7 @@ class Login extends Component {
   render() {
     const LoginFormWithLoader = WithLoader(LoginForm)
     return (
-      <LoginFormWithLoader isLoading={this.state.loading} message={this.state.message} handleSubmit={this.handleSubmit} {...this.props} />
+      <LoginFormWithLoader isLoading={this.state.loading} message={this.state.message} url={this.state.url} handleSubmit={this.handleSubmit} {...this.props} />
     );
   }
 }

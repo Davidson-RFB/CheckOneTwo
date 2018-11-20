@@ -30,7 +30,7 @@ module.exports = new Router()
 
     const message = await config.mail.sendLoginToken(user.email, user.id, token);
 
-    res.json({ message });
+    res.json(message);
   })
   .get('/:id/login', async (req, res) => {
     const user = await User.findById(req.params.id);

@@ -44,10 +44,15 @@ const send = (to, subject, body) => new Promise((resolve, reject) => {
       if (process.env.SMTP_HOST === 'smtp.ethereal.email') {
         const testMessageUrl = nodemailer.getTestMessageUrl(info);
         console.log('Preview URL: %s', testMessageUrl); // eslint-disable-line no-console
-        return resolve('Test mode. Preview email at: '+testMessageUrl);
+        return resolve({
+          message: 'Test mode. Preview email at: '+testMessageUrl,
+          url: testMessageUrl,
+        });
       }
 
-      return resolve('Email sent! Check your inbox and click the link in the email to log in.');
+      return resolve({
+        message: 'Email sent! Check your inbox and click the link in the email to log in.'
+      });
     });
   }
 });
