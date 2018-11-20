@@ -8,6 +8,7 @@
   },
   "scripts": {
     "start": "/usr/bin/env node ./bin/server",
+    "prestart": "npm install",
     "test": "mocha --reporter spec",
     "watch": "watch mocha --reporter spec",
     "coverage": "nyc npm test",
