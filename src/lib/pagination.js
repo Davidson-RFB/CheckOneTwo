@@ -1,6 +1,6 @@
 module.exports = (query) => {
   const paginated = Object.assign({}, {
-    per_page: 20,
+    per_page: 200,
     page: 1,
   }, query);
   if (!parseInt(paginated.per_page, 10)) paginated.per_page = undefined;
