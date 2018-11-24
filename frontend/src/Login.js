@@ -35,8 +35,10 @@ class LoginForm extends Component {
       return (
         <div>
           <p>{this.props.message}</p>
-          <p>Url is: {this.props.url}</p>
-          <a href={this.props.url}>Click Here</a>
+          { this.props.url ? <div>
+            <p>Url is: {this.props.url}</p>
+            <a href={this.props.url}>Click Here</a>
+          </div> : null }
         </div>
       )
     }
