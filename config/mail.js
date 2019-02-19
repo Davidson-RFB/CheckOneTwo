@@ -19,15 +19,15 @@ if (process.env.SMTP_HOST === 'smtp.ethereal.email') {
   transporter = nodemailer.createTransport({
     host: process.env.SMTP_HOST,
     port: process.env.SMTP_PORT,
-    secure: process.env.SMTP_SECURE == "true",
+    secure: process.env.SMTP_SECURE === 'true',
     auth: {
       user: process.env.SMTP_USER,
       pass: process.env.SMTP_PASS,
     },
     requireTLS: true,
     tls: {
-      ciphers: 'SSLv3'
-    }
+      ciphers: 'SSLv3',
+    },
   });
 }
 
@@ -49,13 +49,13 @@ const send = (to, subject, body) => new Promise((resolve, reject) => {
         const testMessageUrl = nodemailer.getTestMessageUrl(info);
         console.log('Preview URL: %s', testMessageUrl); // eslint-disable-line no-console
         return resolve({
-          message: 'Test mode. Preview email at: '+testMessageUrl,
+          message: `Test mode. Preview email at: ${testMessageUrl}`,
           url: testMessageUrl,
         });
       }
 
       return resolve({
-        message: 'Email sent! Check your inbox and click the link in the email to log in.'
+        message: 'Email sent! Check your inbox and click the link in the email to log in.',
       });
     });
   }

@@ -1,7 +1,6 @@
 const httperrors = require('httperrors');
 const uuid = require('uuid');
 const { db } = require('../../config');
-const logger = require('../../config/logger');
 
 const addUUIDs = (i) => {
   if (!i.uuid) i.uuid = uuid.v4();
@@ -9,24 +8,6 @@ const addUUIDs = (i) => {
 };
 
 const validUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-
-const findLastChecked = async (input) => {
-  if (!input) return input;
-
-  const site = Object.assign({}, input);
-
-  try {
-    const lastCheckResult = await db.query('SELECT created_at, submitted_by FROM checks WHERE site_id = $1 ORDER BY created_at DESC LIMIT 1', [site.id]);
-    const check = lastCheckResult.rows[0];
-
-    site.last_checked_at = check.created_at;
-    site.last_checked_by = check.submitted_by;
-  } catch (e) {
-    site.last_checked_at = new Date(0);
-  }
-
-  return site;
-};
 
 const Site = {
   findAll: async (params) => {

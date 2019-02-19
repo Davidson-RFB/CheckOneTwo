@@ -24,5 +24,5 @@ router.get('/health', (req, res) => {
 });
 
 router.use('/v1', v1);
-router.use(express.static('./frontend/build'))
-router.use('*', express.static('./frontend/build/index.html'))
+router.use(express.static('./frontend/build'));
+router.use('*', express.static('./frontend/build/index.html'));

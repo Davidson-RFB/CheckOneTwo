@@ -47,7 +47,7 @@ describe('site model', () => {
     const check = (await checkFixtureFactory()).data;
     check.site_id = site.id;
     await Check.create(check);
-    const found = (await Site.findAll({by_group: site.group_id}))[0];
+    const found = (await Site.findAll({ by_group: site.group_id }))[0];
     expect(found.last_checked_at).to.exist();
     expect(found.last_checked_by).to.equal(check.submitted_by);
   });

@@ -1,24 +1,6 @@
 const uuid = require('uuid');
 const { db } = require('../../config');
 
-const findLastChecked = async (input) => {
-  if (!input) return input;
-
-  const group = Object.assign({}, input);
-
-  try {
-    const lastCheckResult = await db.query('SELECT checks.created_at, checks.submitted_by FROM checks JOIN sites ON checks.site_id = sites.id WHERE sites.group_id = $1 ORDER BY created_at DESC LIMIT 1', [group.id]);
-    const check = lastCheckResult.rows[0];
-
-    group.last_checked_at = check.created_at;
-    group.last_checked_by = check.submitted_by;
-  } catch (e) {
-    group.last_checked_at = new Date(0);
-  }
-
-  return group;
-};
-
 const Group = {
   findAll: async (params) => {
     const query = [`
