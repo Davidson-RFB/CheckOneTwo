@@ -39,7 +39,6 @@ services:
     depends_on:
       - postgresql
 
-  # You can use whatever DB you like, obv
   postgresql:
     image: postgres:9.5
     command: postgres
