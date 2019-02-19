@@ -1,9 +1,9 @@
 const pagination = require('../../src/lib/pagination');
 
 describe('pagination', () => {
-  it('must default per_page to 20', () => {
+  it('must default per_page to 200', () => {
     const result = pagination({});
-    expect(result.per_page).to.equal(20);
+    expect(result.per_page).to.equal(200);
   });
 
   it('must default page to 1', () => {
