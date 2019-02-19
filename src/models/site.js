@@ -1,6 +1,7 @@
 const httperrors = require('httperrors');
 const uuid = require('uuid');
 const { db } = require('../../config');
+const logger = require('../../config/logger');
 
 const addUUIDs = (i) => {
   if (!i.uuid) i.uuid = uuid.v4();
@@ -29,12 +30,26 @@ const findLastChecked = async (input) => {
 
 const Site = {
   findAll: async (params) => {
-    const query = ['SELECT id, group_id, name, items FROM sites'];
+    const query = [`
+    SELECT
+      id, group_id, name, items, c.last_checked_at, c.last_checked_by
+    FROM
+      sites AS s
+      LEFT JOIN LATERAL (
+        SELECT
+          site_id, created_at AS last_checked_at, submitted_by AS last_checked_by
+        FROM
+          checks AS c
+        WHERE
+          c.site_id = s.id
+        ORDER BY created_at DESC LIMIT 1
+      ) AS c on 1=1
+    `];
 
     const args = [];
 
     if (params.by_group) {
-      query.push('WHERE group_id = $1');
+      query.push('WHERE s.group_id = $1');
       args.push(params.by_group);
     }
 
@@ -43,16 +58,28 @@ const Site = {
     }
     const result = await db.query(query.join(' '), args);
 
-    const rows = await Promise.all(result.rows.map(findLastChecked));
-
-    return rows;
+    return result.rows;
   },
   findById: async (id) => {
-    const result = await db.query('SELECT id, group_id, name, items FROM sites WHERE id = $1', [id]);
+    const query = `
+    SELECT
+      id, group_id, name, items, c.last_checked_at, c.last_checked_by
+    FROM
+      sites AS s
+      LEFT JOIN LATERAL (
+        SELECT
+          site_id, created_at AS last_checked_at, submitted_by AS last_checked_by
+        FROM
+          checks AS c
+        WHERE
+          c.site_id = s.id
+        ORDER BY created_at DESC LIMIT 1
+      ) AS c on 1=1
+      WHERE id = $1
+    `;
+    const result = await db.query(query, [id]);
 
-    const site = await findLastChecked(result.rows[0]);
-
-    return site;
+    return result.rows[0];
   },
   create: async (site) => {
     if (!site.id) site.id = uuid.v4();

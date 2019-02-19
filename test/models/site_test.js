@@ -39,11 +39,17 @@ describe('site model', () => {
 
   it('must contain the last checked at timestamp', async () => {
     const site = await Site.create(fixture);
+
+    const oldCheck = (await checkFixtureFactory()).data;
+    oldCheck.site_id = site.id;
+    await Check.create(oldCheck);
+
     const check = (await checkFixtureFactory()).data;
     check.site_id = site.id;
     await Check.create(check);
-    const found = await Site.findById(site.id);
+    const found = (await Site.findAll({by_group: site.group_id}))[0];
     expect(found.last_checked_at).to.exist();
+    expect(found.last_checked_by).to.equal(check.submitted_by);
   });
 
   it('must return group sites', async () => {
