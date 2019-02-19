@@ -15,51 +15,20 @@ const environmentVariables = [
   'DATABASE_URI',
   'COOKIE_SECRET',
   'TOKEN_SECRET',
-  {
-    var: 'APP_URI',
-    default: 'localhost',
-  },
+  'APP_URI',
   {
     var: 'SALT_ROUNDS',
     default: '10',
   },
-  {
-    var: 'SMTP_HOST',
-    default: 'smtp.ethereal.email',
-  },
-  {
-    var: 'SMTP_PORT',
-    default: '587',
-  },
-  {
-    var: 'SMTP_SECURE',
-    default: 'false',
-  },
-  {
-    var: 'SMTP_USER',
-    default: 'test',
-  },
-  {
-    var: 'SMTP_PASS',
-    default: 'test',
-  },
-  {
-    var: 'EMAIL_FROM',
-    default: 'checkonetwo@example.com',
-  },
-  {
-    var: 'URI',
-    default: 'http://localhost:3000',
-  },
-  {
-    var: 'URI',
-    default: 'http://localhost:3000',
-  },
+  'SMTP_HOST',
+  'SMTP_PORT',
+  'SMTP_SECURE',
+  'SMTP_USER',
+  'SMTP_PASS',
+  'EMAIL_FROM',
+  'URI',
   'WHITELIST_DOMAIN',
-  {
-    var: 'JWT_SECRET',
-    default: '1bd8685d-a630-45d3-bead-3e3de3d16903',
-  },
+  'JWT_SECRET',
 ];
 
 re(environmentVariables);

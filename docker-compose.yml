@@ -15,6 +15,16 @@ services:
       - COOKIE_SECRET=839c26a7-1982-46e8-99e6-e7c592db527a
       - TOKEN_SECRET=a2ed14ea-0884-427a-9c62-91072decb314
       - WHITELIST_DOMAIN=banham.id.au
+      - URI=http://localhost:3000
+      - EMAIL_FROM=checkonetwo@example.com
+      - JWT_SECRET=1bd8685d-a630-45d3-bead-3e3de3d16903
+      - SMTP_HOST=smtp.ethereal.email
+      - SMTP_PORT=587
+      - SMTP_SECURE=false
+      - SMTP_USER=test
+      - SMTP_PASS=test
+      - APP_URI=localhost
+
     ports:
       - "3001:3000"
 
