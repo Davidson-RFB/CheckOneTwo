@@ -32,3 +32,19 @@ To run the dev server:
 ```
 docker-compose up -d dev
 ```
+
+## Deployment
+
+Auth info is here:
+
+https://portal.azure.com/#@davidsonrfb.org/resource/subscriptions/30916492-e53f-47fb-80df-8194d86f684d/resourceGroups/DefaultResourceGroup-EUS/providers/Microsoft.ContainerRegistry/registries/davidsonrfb/accessKey
+
+First time login with:
+
+    docker login davidsonrfb.azurecr.io
+
+Then to deploy:
+
+    docker build --tag checkonetwo .
+    docker tag checkonetwo:latest davidsonrfb.azurecr.io/checkonetwo
+    docker push davidsonrfb.azurecr.io/checkonetwo
