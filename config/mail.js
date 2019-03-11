@@ -81,7 +81,7 @@ Notes: ${item.notes}`;
 
 The check was completed by ${check.submitted_by} on ${moment(check.created_at).tz('Australia/Sydney')}.
 
-View the check at ${process.env.URI}/checks/${check.id}
+View the check at ${process.env.APP_URI}/checks/${check.id}
 `;
     return send(to, `Check failed on ${site.name} - ${group.name}`, body);
   },

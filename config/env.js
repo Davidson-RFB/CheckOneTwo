@@ -26,7 +26,6 @@ const environmentVariables = [
   'SMTP_USER',
   'SMTP_PASS',
   'EMAIL_FROM',
-  'URI',
   'WHITELIST_DOMAIN',
   'JWT_SECRET',
 ];
