@@ -1,5 +1,6 @@
 const { Router } = require('express');
 const express = require('express');
+const { db } = require('../../config');
 
 const v1 = new Router()
   .use('/users', require('./users'))
