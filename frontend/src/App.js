@@ -285,10 +285,10 @@ class Group extends Component {
     };
   }
 
-  async componentDidMount() {
-    await getData('group', '/v1/groups/'+this.props.match.params.groupId, this)
-    await getData('sites', '/v1/sites?by_group='+this.props.match.params.groupId, this)
-    await getData('markers', '/v1/markers?by_group='+this.props.match.params.groupId, this)
+  componentDidMount() {
+    getData('group', '/v1/groups/'+this.props.match.params.groupId, this)
+    getData('sites', '/v1/sites?by_group='+this.props.match.params.groupId, this)
+    getData('markers', '/v1/markers?by_group='+this.props.match.params.groupId, this)
   }
 
   render() {
@@ -392,7 +392,7 @@ class Site extends Component {
 
   async componentDidMount() {
     const site = await getData('site', '/v1/sites/'+this.props.match.params.siteId, this)
-    await getData('group', '/v1/groups/'+site.group_id, this)
+    getData('group', '/v1/groups/'+site.group_id, this)
   }
 
   async submitCheck(final, check) {
