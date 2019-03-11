@@ -21,6 +21,12 @@ class GroupsList extends Component {
           return <Link key={group.id} to={`${this.props.match.url}/${group.id}`}>
             <ListItem>
               <ListItemText primary={group.name} secondary={"Last Checked: "+moment(group.last_checked_at).fromNow()} />
+              <Button
+                variant="contained"
+                color="primary"
+              >
+                  Check Now
+              </Button>
             </ListItem>
           </Link>
         })}
