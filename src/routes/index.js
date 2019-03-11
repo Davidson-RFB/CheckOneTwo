@@ -12,7 +12,7 @@ const v1 = new Router()
 
 const router = module.exports = new Router();
 
-router.get('/health', (req, res) => {
+router.get('/health', async (req, res) => {
   await db.query('SELECT NOW()');
   res.send('ok');
 });
